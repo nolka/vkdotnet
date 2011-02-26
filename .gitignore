@@ -1,0 +1,10 @@
+*.obj
+*.rar
+*.7z
+*.exe
+*.pdb
+*.dll
+[Rr]elease/
+[Dd]ebug/
+[Oo]bj/
+[Bb]in/
