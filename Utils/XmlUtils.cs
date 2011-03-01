@@ -48,6 +48,15 @@ namespace ApiCore
             return -1;
         }
 
+        public static int IntVal()
+        {
+            if (XmlUtils.node != null)
+            {
+                return Convert.ToInt32(XmlUtils.node.InnerText) ;
+            }
+            return -1;
+        }
+
         /// <summary>
         /// Gets double value from node
         /// </summary>

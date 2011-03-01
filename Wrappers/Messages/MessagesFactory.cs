@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml;
 using System.Web;
 
-namespace ApiCore
+namespace ApiCore.Messages
 {    
     //private enum MessageType
     //{

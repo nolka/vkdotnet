@@ -224,9 +224,9 @@ namespace ApiCore
         /// Create LongPoll connection unit
         /// </summary>
         /// <returns>LongPollServerConnection unit</returns>
-        public LongPollServerConnection GetLongPollServerConnection()
+        public ApiCore.Messages.LongPollServerConnection GetLongPollServerConnection()
         {
-            LongPollServerConnection connection = new LongPollServerConnection(this);
+            ApiCore.Messages.LongPollServerConnection connection = new ApiCore.Messages.LongPollServerConnection(this);
             return connection;
         }
 
@@ -234,9 +234,9 @@ namespace ApiCore
         /// Create LongPoll connection unit
         /// </summary>
         /// <returns>LongPollServerConnection unit</returns>
-        public LongPollServerConnection GetLongPollServerConnection(int waitTime)
+        public ApiCore.Messages.LongPollServerConnection GetLongPollServerConnection(int waitTime)
         {
-            LongPollServerConnection connection = new LongPollServerConnection(this);
+            ApiCore.Messages.LongPollServerConnection connection = new ApiCore.Messages.LongPollServerConnection(this);
             connection.WaitTime = waitTime;
             return connection;
         }

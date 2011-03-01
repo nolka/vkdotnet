@@ -60,7 +60,7 @@
     <Compile Include="Exceptions\ApiRequestErrorException.cs" />
     <Compile Include="BaseFactory.cs" />
     <Compile Include="Exceptions\ApiRequestNullResult.cs" />
-    <Compile Include="LongPollServerConnection.cs" />
+    <Compile Include="Wrappers\Messages\LongPollServerConnection.cs" />
     <Compile Include="ApiPermissions.cs" />
     <Compile Include="Wrappers\App\AppFactory.cs" />
     <Compile Include="Wrappers\Audio\AudioEntry.cs" />
@@ -101,7 +101,9 @@
     <Compile Include="Wrappers\Photos\AlbumAccessPrivacy.cs" />
     <Compile Include="Wrappers\Photos\AlbumCommentPrivacy.cs" />
     <Compile Include="Wrappers\Photos\AlbumEntry.cs" />
-    <Compile Include="Wrappers\Photos\PhotoEntry.cs" />
+    <Compile Include="Wrappers\Photos\PhotoEntryFull.cs" />
+    <Compile Include="Wrappers\Photos\PhotoEntryShort.cs" />
+    <Compile Include="Wrappers\Photos\PhotoEntryTag.cs" />
     <Compile Include="Wrappers\Photos\PhotosFactory.cs" />
     <Compile Include="Wrappers\Photos\PhotoUploadInfo.cs" />
     <Compile Include="Wrappers\Questions\QuestionAnswer.cs" />

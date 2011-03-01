@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace ApiCore
+namespace ApiCore.Offers
 {
     /// <summary>
     /// Represent Offers wrapper

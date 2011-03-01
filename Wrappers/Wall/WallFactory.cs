@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using ApiCore.AttachmentTypes;
 
-namespace ApiCore
+namespace ApiCore.Wall
 {
     public class WallFactory: BaseFactory
     {

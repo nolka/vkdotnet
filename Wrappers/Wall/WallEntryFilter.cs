@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApiCore
+namespace ApiCore.Wall
 {
     public static class WallEntryFilter
     {

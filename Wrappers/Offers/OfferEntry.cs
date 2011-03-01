@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApiCore
+namespace ApiCore.Offers
 {
     public class OfferEntry
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace ApiCore
+namespace ApiCore.Photos
 {
     public class PhotosFactory: BaseFactory
     {
@@ -52,13 +52,14 @@ namespace ApiCore
             return null;
         }
 
-        private PhotoEntry buildPhotoEntry(XmlNode node)
+        private PhotoEntryFull buildPhotoEntryFull(XmlNode node)
         {
             if (node != null)
             {
                 XmlUtils.UseNode(node);
-                PhotoEntry photo = new PhotoEntry();
-                photo.Id = XmlUtils.Int("aid");
+                PhotoEntryFull photo = new PhotoEntryFull();
+                photo.Id = XmlUtils.Int("pid");
+                photo.AlbumId = XmlUtils.Int("aid");
                 photo.OwnerId = XmlUtils.Int("owner_id");
                 photo.Url = XmlUtils.String("src");
                 photo.UrlBig = XmlUtils.String("src_big");
@@ -72,17 +73,90 @@ namespace ApiCore
             return null;
         }
 
-        private List<PhotoEntry> buildPhotosList(XmlNode data)
+        private PhotoEntryShort buildPhotoEntryShort(XmlNode node)
+        {
+            if (node != null)
+            {
+                XmlUtils.UseNode(node);
+                PhotoEntryShort photo = new PhotoEntryShort();
+                photo.Id = XmlUtils.Int("pid");
+                photo.AlbumId = XmlUtils.Int("aid");
+                photo.OwnerId = XmlUtils.Int("owner_id");
+                photo.Url = XmlUtils.String("src");
+                photo.UrlBig = XmlUtils.String("src_big");
+                photo.UrlSmall = XmlUtils.String("src_small");
+                photo.DateCreated = CommonUtils.FromUnixTime(XmlUtils.Int("created"));
+                return photo;
+            }
+            return null;
+        }
+
+        private List<PhotoEntryFull> buildPhotosListFull(XmlNode data)
         {
             XmlNodeList nodes = data.SelectNodes("photo");
             if (nodes.Count > 0)
             {
-                List<PhotoEntry> photos = new List<PhotoEntry>();
+                List<PhotoEntryFull> photos = new List<PhotoEntryFull>();
                 foreach (XmlNode n in nodes)
                 {
-                    photos.Add(this.buildPhotoEntry(n));
+                    photos.Add(this.buildPhotoEntryFull(n));
                 }
                 return photos;
+            }
+            return null;
+        }
+
+        private List<PhotoEntryShort> buildPhotosListShort(XmlNode data)
+        {
+            XmlNodeList nodes = data.SelectNodes("photo");
+            if (nodes.Count > 0)
+            {
+                List<PhotoEntryShort> photos = new List<PhotoEntryShort>();
+                foreach (XmlNode n in nodes)
+                {
+                    photos.Add(this.buildPhotoEntryShort(n));
+                }
+                return photos;
+            }
+            return null;
+        }
+
+        private List<PhotoEntryTag> buildPhotoTagsList(XmlNode result)
+        {
+            XmlNodeList nodes = result.SelectNodes("tag");
+            if (nodes.Count > 0)
+            {
+                List<PhotoEntryTag> tags = new List<PhotoEntryTag>();
+                foreach (XmlNode n in nodes)
+                {
+                    XmlUtils.UseNode(n);
+                    PhotoEntryTag tag = new PhotoEntryTag();
+                    /**
+                     * <tag>
+                      <uid>5005272</uid>
+                      <tag_id>2859378</tag_id>
+                      <placer_id>5005272</placer_id>
+                      <tagged_name>Алексей Харьков</tagged_name>
+                      <date>1214309859</date>
+                      <x>8.98</x>
+                      <y>6.65</y>
+                      <x2>39.01</x2>
+                      <y2>64.45</y2>
+                      <viewed>1</viewed>
+                     </tag>
+                     */
+                    tag.Id = XmlUtils.Int("tag_id");
+                    tag.UserId = XmlUtils.Int("uid");
+                    tag.PlacerId = XmlUtils.Int("placer_id");
+                    tag.Date = CommonUtils.FromUnixTime(XmlUtils.Int("date"));
+                    tag.X = XmlUtils.Int("x");
+                    tag.Y = XmlUtils.Int("y");
+                    tag.X2 = XmlUtils.Int("x2");
+                    tag.Y2 = XmlUtils.Int("y2");
+                    tag.Viewed = XmlUtils.Int("viewed");
+                    tags.Add(tag);
+                }
+                return tags;
             }
             return null;
         }
@@ -107,7 +181,7 @@ namespace ApiCore
             return null;
         }
 
-        public List<PhotoEntry> GetPhotos(int userId, int albumId, int[] photoIds, int? count, int? offset)
+        public List<PhotoEntryFull> GetPhotos(int userId, int albumId, int[] photoIds, int? count, int? offset)
         {
             this.Manager.Method("photos.get");
             this.Manager.Params("uid", userId);
@@ -128,12 +202,119 @@ namespace ApiCore
             XmlNode result = this.Manager.Execute().GetResponseXml();
             if (this.Manager.MethodSuccessed)
             {
-                return this.buildPhotosList(result);
+                return this.buildPhotosListFull(result);
             }
             return null;
         }
 
-        public List<PhotoEntry> GetPhotosById(string[] photos)
+        public List<PhotoEntryShort> GetAll(int? userId, int? count, int? offset)
+        {
+            this.Manager.Method("photos.getAll");
+            if (userId != null)
+            {
+                this.Manager.Params("owner_id", userId);
+            }
+            if (count != null)
+            {
+                this.Manager.Params("limit", count);
+            }
+            if (offset != null)
+            {
+                this.Manager.Params("offset", offset);
+            }
+
+            XmlNode result = this.Manager.Execute().GetResponseXml();
+            if (this.Manager.MethodSuccessed)
+            {
+                return this.buildPhotosListShort(result);
+            }
+            return null;
+        }
+
+        public List<PhotoEntryShort> GetUserPhotos(int? userId, int? count, int? offset)
+        {
+            this.Manager.Method("photos.getUserPhotos");
+            if (userId != null)
+            {
+                this.Manager.Params("uid", userId);
+            }
+            if (count != null)
+            {
+                this.Manager.Params("limit", count);
+            }
+            if (offset != null)
+            {
+                this.Manager.Params("offset", offset);
+            }
+
+            XmlNode result = this.Manager.Execute().GetResponseXml();
+            if (this.Manager.MethodSuccessed)
+            {
+                return this.buildPhotosListShort(result);
+            }
+            return null;
+        }
+
+        public List<PhotoEntryTag> GetTags(int photoId, int? ownerId)
+        {
+            this.Manager.Method("photos.getTags");
+            this.Manager.Params("pid", photoId);
+            if (ownerId != null)
+            {
+                this.Manager.Params("owner_id", ownerId);
+            }
+
+            XmlNode result = this.Manager.Execute().GetResponseXml();
+            if (this.Manager.MethodSuccessed)
+            {
+                return this.buildPhotoTagsList(result);
+            }
+            return null;
+        }
+
+        public int PutTag(int? ownerId, int photoId, int userId, float x, float y, float x2, float y2)
+        {
+            this.Manager.Method("photos.putTag");
+            this.Manager.Params("pid", photoId);
+            this.Manager.Params("uid", userId);
+            this.Manager.Params("x", x);
+            this.Manager.Params("y", y);
+            this.Manager.Params("x2", x2);
+            this.Manager.Params("y2", y2);
+            if (ownerId != null)
+            {
+                this.Manager.Params("owner_id", ownerId);
+            }
+
+            XmlNode result = this.Manager.Execute().GetResponseXml();
+            if (this.Manager.MethodSuccessed)
+            {
+                XmlUtils.UseNode(result);
+                return XmlUtils.IntVal();
+            }
+            return -1;
+        }
+
+        public bool RemoveTag(int? ownerId, int photoId, int tagId)
+        {
+            this.Manager.Method("photos.removeTag");
+            this.Manager.Params("pid", photoId);
+            this.Manager.Params("tag_id", tagId);
+            if (ownerId != null)
+            {
+                this.Manager.Params("owner_id", ownerId);
+            }
+
+            XmlNode result = this.Manager.Execute().GetResponseXml();
+            if (this.Manager.MethodSuccessed)
+            {
+                XmlUtils.UseNode(result);
+                return XmlUtils.BoolVal();
+            }
+            return false;
+        }
+
+        public List<PhotoEntryFull> GetPhotosById(string[] photos)
         {
             this.Manager.Method("photos.getById");
             if (photos != null)
@@ -143,7 +324,7 @@ namespace ApiCore
             XmlNode result = this.Manager.Execute().GetResponseXml();
             if (this.Manager.MethodSuccessed)
             {
-                return this.buildPhotosList(result);
+                return this.buildPhotosListFull(result);
             }
             return null;
         }

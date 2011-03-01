@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace ApiCore
+namespace ApiCore.Activity
 {
     /// <summary>
     /// Represents an a Vkontakte activity manager, that can get, or set user activities and actoivities of her friends
