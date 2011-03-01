@@ -3,7 +3,6 @@
 *.7z
 *.exe
 *.pdb
-*.dll
 [Rr]elease/
 [Dd]ebug/
 [Oo]bj/
