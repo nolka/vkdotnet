@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Utils\QueryBuilder.cs" />
+    <Compile Include="Utils\ApiQueryBuilder.cs" />
     <Compile Include="Utils\SessionManager\Authorizarion\BrowserAuthorization\BrowserAuthorization.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -58,7 +58,7 @@
     <Compile Include="ApiRequest.cs" />
     <Compile Include="Exceptions\ApiRequestEmptyAnswerException.cs" />
     <Compile Include="Exceptions\ApiRequestErrorException.cs" />
-    <Compile Include="BaseFactory.cs" />
+    <Compile Include="Wrappers\Common\Factories\BaseFactory.cs" />
     <Compile Include="Exceptions\ApiRequestNullResult.cs" />
     <Compile Include="Wrappers\Messages\LongPollServerConnection.cs" />
     <Compile Include="ApiPermissions.cs" />
@@ -91,7 +91,6 @@
     <Compile Include="Wrappers\Friends\FriendsFactory.cs" />
     <Compile Include="Wrappers\Messages\Message.cs" />
     <Compile Include="Wrappers\Messages\MessagesFactory.cs" />
-    <Compile Include="QueryBuilder.cs" />
     <Compile Include="Utils\CommonUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wrappers\Offers\OfferEntry.cs" />
