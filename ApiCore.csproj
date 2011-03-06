@@ -105,6 +105,10 @@
     <Compile Include="Wrappers\Photos\PhotoEntryTag.cs" />
     <Compile Include="Wrappers\Photos\PhotosFactory.cs" />
     <Compile Include="Wrappers\Photos\PhotoUploadInfo.cs" />
+    <Compile Include="Wrappers\Polls\PollAnswerCollection.cs" />
+    <Compile Include="Wrappers\Polls\PollAnswer.cs" />
+    <Compile Include="Wrappers\Polls\PollEntry.cs" />
+    <Compile Include="Wrappers\Polls\PollsFactory.cs" />
     <Compile Include="Wrappers\Questions\QuestionAnswer.cs" />
     <Compile Include="Wrappers\Questions\QuestionAnswerVoter.cs" />
     <Compile Include="Wrappers\Questions\QuestionEntry.cs" />
@@ -115,6 +119,8 @@
     <Compile Include="Wrappers\Common\GeoTypePlace.cs" />
     <Compile Include="Wrappers\Common\Attachment.cs" />
     <Compile Include="Wrappers\Status\StatusFactory.cs" />
+    <Compile Include="Wrappers\Subscriptions\SubscriptionsFactory.cs" />
+    <Compile Include="Wrappers\Subscriptions\SubscriptionsInfo.cs" />
     <Compile Include="Wrappers\Wall\WallEntry.cs" />
     <Compile Include="Wrappers\Wall\WallEntryFilter.cs" />
     <Compile Include="Wrappers\Wall\WallFactory.cs" />

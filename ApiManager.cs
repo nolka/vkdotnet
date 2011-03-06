@@ -52,7 +52,7 @@ namespace ApiCore
         {
             get
             {
-                return "0.6.9.5 beta";
+                return "0.12 beta";
             }
         }
 
@@ -80,7 +80,7 @@ namespace ApiCore
         }
 
         /// <summary>
-        /// When new log data available
+        /// When new log data available this event occurs
         /// </summary>
         public event ApiManagerLogHandler Log;
         /// <summary>

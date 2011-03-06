@@ -8,6 +8,9 @@ using ApiCore;
 
 namespace ApiCore
 {
+    /// <summary>
+    /// Class for building url queries to vkontakte api
+    /// </summary>
     public class ApiQueryBuilder
     {
         private Dictionary<string, string> paramData;
