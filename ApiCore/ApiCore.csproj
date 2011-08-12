@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6885B1CF-B02D-4AB0-9F5C-A3EE4974655C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ApiCore</RootNamespace>
+    <AssemblyName>ApiCore</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Utils\ApiPermissions.cs" />
+    <Compile Include="Utils\QueryBuilders\ApiQueryBuilder.cs" />
+    <Compile Include="Utils\SessionManager\Authorizarion\AuthType.cs" />
+    <Compile Include="Utils\SessionManager\Authorizarion\VKAuth\VKAuth.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utils\SessionManager\Authorizarion\VKAuth\VKAuth.Designer.cs">
+      <DependentUpon>VKAuth.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\SessionManager\Authorizarion\NoBrowser\NoBrowser.cs" />
+    <Compile Include="Utils\SessionManager\Authorizarion\AuthDisplay.cs" />
+    <Compile Include="Utils\SessionManager\Authorizarion\OAuth\OAuth.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utils\SessionManager\Authorizarion\OAuth\OAuth.Designer.cs">
+      <DependentUpon>OAuth.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\SessionManager\Sessions\OAuthSessionInfo.cs" />
+    <Compile Include="Utils\SessionManager\Sessions\SessionInfo.cs" />
+    <Compile Include="Utils\SessionManager\SessionManager.cs" />
+    <Compile Include="Utils\SessionManager\Sessions\VKSessionInfo.cs" />
+    <Compile Include="Utils\XmlUtils.cs" />
+    <Compile Include="Wrappers\Activity\ActivityEntry.cs" />
+    <Compile Include="Wrappers\Activity\ActivityFactory.cs" />
+    <Compile Include="ApiManager.cs" />
+    <Compile Include="ApiRequest.cs" />
+    <Compile Include="Exceptions\ApiRequestEmptyAnswerException.cs" />
+    <Compile Include="Exceptions\ApiRequestErrorException.cs" />
+    <Compile Include="Wrappers\Audio\AudioUploadedInfo.cs" />
+    <Compile Include="Wrappers\Common\ExportServices.cs" />
+    <Compile Include="Wrappers\Common\Factories\BaseFactory.cs" />
+    <Compile Include="Exceptions\ApiRequestNullResult.cs" />
+    <Compile Include="Wrappers\Common\Factories\HttpUploaderFactory.cs" />
+    <Compile Include="Wrappers\Common\MessageAttachment.cs" />
+    <Compile Include="Wrappers\Messages\LongPollServerConnection.cs" />
+    <Compile Include="Wrappers\App\AppFactory.cs" />
+    <Compile Include="Wrappers\Audio\AudioEntry.cs" />
+    <Compile Include="Wrappers\Audio\AudioFactory.cs" />
+    <Compile Include="Wrappers\Audio\AudioSortOrder.cs" />
+    <Compile Include="Wrappers\Common\BaseEntry.cs" />
+    <Compile Include="Wrappers\Common\EntryComment.cs" />
+    <Compile Include="Wrappers\Common\Factories\AttachmentFactory.cs" />
+    <Compile Include="Wrappers\Common\AttachmentTypes\AttachmentApplication.cs" />
+    <Compile Include="Wrappers\Common\AttachmentTypes\AttachmentAudio.cs" />
+    <Compile Include="Wrappers\Common\AttachmentTypes\AttachmentData.cs" />
+    <Compile Include="Wrappers\Common\AttachmentTypes\AttachmentGraffiti.cs" />
+    <Compile Include="Wrappers\Common\AttachmentTypes\AttachmentNote.cs" />
+    <Compile Include="Wrappers\Common\AttachmentTypes\AttachmentPhoto.cs" />
+    <Compile Include="Wrappers\Common\AttachmentTypes\AttachmentPoll.cs" />
+    <Compile Include="Wrappers\Common\AttachmentTypes\AttachmentPostedPhoto.cs" />
+    <Compile Include="Wrappers\Common\AttachmentTypes\AttachmentUrl.cs" />
+    <Compile Include="Wrappers\Common\AttachmentTypes\AttachmentVideo.cs" />
+    <Compile Include="Wrappers\Common\CommentsInfo.cs" />
+    <Compile Include="Wrappers\Common\Factories\CommentsFactory.cs" />
+    <Compile Include="Wrappers\Common\Factories\LikesFactory.cs" />
+    <Compile Include="Wrappers\Common\LikesInfo.cs" />
+    <Compile Include="Wrappers\Common\SortOrder.cs" />
+    <Compile Include="Wrappers\Friends\Friend.cs" />
+    <Compile Include="Wrappers\Friends\FriendFields.cs" />
+    <Compile Include="Wrappers\Friends\FriendNameCase.cs" />
+    <Compile Include="Wrappers\Friends\FriendSex.cs" />
+    <Compile Include="Wrappers\Friends\FriendsFactory.cs" />
+    <Compile Include="Wrappers\Messages\Message.cs" />
+    <Compile Include="Wrappers\Messages\MessagesFactory.cs" />
+    <Compile Include="Utils\CommonUtils.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Wrappers\Offers\OfferEntry.cs" />
+    <Compile Include="Wrappers\Offers\OfferInboundEntry.cs" />
+    <Compile Include="Wrappers\Offers\OfferOutboundEntry.cs" />
+    <Compile Include="Wrappers\Offers\OffersFactory.cs" />
+    <Compile Include="Wrappers\Photos\AlbumAccessPrivacy.cs" />
+    <Compile Include="Wrappers\Photos\AlbumCommentPrivacy.cs" />
+    <Compile Include="Wrappers\Photos\AlbumEntry.cs" />
+    <Compile Include="Wrappers\Photos\PhotoEntryFull.cs" />
+    <Compile Include="Wrappers\Photos\PhotoEntryShort.cs" />
+    <Compile Include="Wrappers\Photos\PhotoEntryTag.cs" />
+    <Compile Include="Wrappers\Photos\PhotosFactory.cs" />
+    <Compile Include="Wrappers\Photos\PhotoUploadedInfo.cs" />
+    <Compile Include="Wrappers\Photos\PhotoUploadInfo.cs" />
+    <Compile Include="Wrappers\Polls\PollAnswerCollection.cs" />
+    <Compile Include="Wrappers\Polls\PollAnswer.cs" />
+    <Compile Include="Wrappers\Polls\PollEntry.cs" />
+    <Compile Include="Wrappers\Polls\PollsFactory.cs" />
+    <Compile Include="Wrappers\Questions\QuestionAnswer.cs" />
+    <Compile Include="Wrappers\Questions\QuestionAnswerVoter.cs" />
+    <Compile Include="Wrappers\Questions\QuestionEntry.cs" />
+    <Compile Include="Wrappers\Questions\QuestionsFactory.cs" />
+    <Compile Include="Wrappers\Questions\QuestionSortMode.cs" />
+    <Compile Include="Wrappers\Questions\QuestionType.cs" />
+    <Compile Include="Wrappers\Common\GeoCoords.cs" />
+    <Compile Include="Wrappers\Common\GeoTypePlace.cs" />
+    <Compile Include="Wrappers\Common\Attachment.cs" />
+    <Compile Include="Wrappers\Status\StatusFactory.cs" />
+    <Compile Include="Wrappers\Subscriptions\SubscriptionsFactory.cs" />
+    <Compile Include="Wrappers\Subscriptions\SubscriptionsInfo.cs" />
+    <Compile Include="Wrappers\Wall\WallEntry.cs" />
+    <Compile Include="Wrappers\Wall\WallEntryFilter.cs" />
+    <Compile Include="Wrappers\Wall\WallFactory.cs" />
+    <Compile Include="Wrappers\Common\GeoInfo.cs" />
+    <Compile Include="Wrappers\Common\GeoType.cs" />
+    <Compile Include="Wrappers\Common\AttachmentTypes\AttachmentType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Wrappers\Video\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Utils\SessionManager\Authorizarion\VKAuth\VKAuth.resx">
+      <DependentUpon>VKAuth.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utils\SessionManager\Authorizarion\OAuth\OAuth.resx">
+      <DependentUpon>OAuth.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
