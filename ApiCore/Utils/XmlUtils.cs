@@ -34,6 +34,15 @@ namespace ApiCore
             return "";
         }
 
+        public static string StringVal()
+        {
+            if (XmlUtils.node != null)
+            {
+                return XmlUtils.node.InnerText.Replace("&lt;br&gt;", "\r\n");
+            }
+            return "";
+        }
+
         /// <summary>
         /// Gets the int value from node
         /// </summary>
@@ -68,7 +77,7 @@ namespace ApiCore
             {
                 return Convert.ToDouble(XmlUtils.node.SelectSingleNode(nodeName).InnerText);
             }
-            return -1;
+            return -1f;
         }
 
         /// <summary>
@@ -82,7 +91,16 @@ namespace ApiCore
             {
                 return float.Parse(XmlUtils.node.SelectSingleNode(nodeName).InnerText);
             }
-            return -1;
+            return -1f;
+        }
+
+        public static float FloatVal()
+        {
+            if (XmlUtils.node != null)
+            {
+                return (float)Convert.ToDouble(XmlUtils.node.InnerText);
+            }
+            return -1f;
         }
 
         /// <summary>

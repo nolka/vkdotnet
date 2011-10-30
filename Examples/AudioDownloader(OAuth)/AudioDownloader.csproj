@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -56,39 +56,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainWnd.cs">
+    <Compile Include="..\AudioDownloader%28OAuth%29\MainWnd.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainWnd.Designer.cs">
-      <DependentUpon>MainWnd.cs</DependentUpon>
+    <Compile Include="..\AudioDownloader%28OAuth%29\MainWnd.Designer.cs">
+      <DependentUpon>..\AudioDownloader%28OAuth%29\MainWnd.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="MainWnd.resx">
-      <DependentUpon>MainWnd.cs</DependentUpon>
+    <Compile Include="..\AudioDownloader%28OAuth%29\Program.cs" />
+    <Compile Include="..\AudioDownloader%28OAuth%29\Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="..\AudioDownloader%28OAuth%29\MainWnd.resx">
+      <DependentUpon>..\AudioDownloader%28OAuth%29\MainWnd.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Include="..\AudioDownloader%28OAuth%29\Properties\Resources.resx">
+      <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
+    <Compile Include="..\AudioDownloader%28OAuth%29\Properties\Resources.Designer.cs">
+      <DependentUpon>..\..\AudioDownloader%28OAuth%29\Properties\Resources.resx</DependentUpon>
     </Compile>
-    <None Include="app.config" />
-    <None Include="Properties\Settings.settings">
+    <None Include="..\AudioDownloader%28OAuth%29\app.config" />
+    <None Include="..\AudioDownloader%28OAuth%29\Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    <Compile Include="..\AudioDownloader%28OAuth%29\Properties\Settings.Designer.cs">
+      <DependentUpon>..\..\AudioDownloader%28OAuth%29\Properties\Settings.settings</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\HttpDownloader\HttpDownloader\HttpDownloader.csproj">
+    <ProjectReference Include="..\..\..\..\..\HttpDownloader\HttpDownloader\HttpDownloader.csproj">
       <Project>{DB451818-C2DC-4408-B1B9-D1AC0C939E51}</Project>
       <Name>HttpDownloader</Name>
     </ProjectReference>
@@ -98,20 +95,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+    <BootstrapperPackage Include="..\AudioDownloader%28OAuth%29\Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>Клиентский профиль .NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+    <BootstrapperPackage Include="..\AudioDownloader%28OAuth%29\Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+    <BootstrapperPackage Include="..\AudioDownloader%28OAuth%29\Microsoft.Windows.Installer.3.1">
       <Visible>False</Visible>
-      <ProductName>Установщик Windows 3.1</ProductName>
-      <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

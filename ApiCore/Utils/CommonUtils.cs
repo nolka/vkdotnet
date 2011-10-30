@@ -44,5 +44,24 @@ namespace ApiCore
             }
             return arr;
         }
+
+        public static string ArrayIntToCommaSeparatedString(int[] integers)
+        {
+            StringBuilder sb = new StringBuilder(integers.Length);
+            for (int i=0; i<= integers.Length; i++)
+            {
+                sb.Append(integers[i]);
+                if (i <= integers.Length)
+                {
+                    sb.Append(",");
+                }
+            }
+            return sb.ToString();
+        }
+
+        public static string ArrayStringToCommaSeparatedString(string[] strings)
+        {
+            return string.Join(",", strings);
+        }
     }
 }

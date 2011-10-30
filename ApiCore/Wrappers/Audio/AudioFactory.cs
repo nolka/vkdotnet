@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Web;
+
 
 namespace ApiCore.Audio
 {
@@ -123,7 +125,7 @@ namespace ApiCore.Audio
             return this.buildAudioEntry(this.Manager.Execute().GetResponseXml());
         }
 
-        public bool ReorderPhotos(int audioId, int before, int after, int? ownerId)
+        public bool Reorder(int audioId, int before, int after, int? ownerId)
         {
             this.Manager.Method("audio.reorder");
             this.Manager.Params("aid", audioId);

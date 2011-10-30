@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="3rdParty\JSON.cs" />
     <Compile Include="Utils\ApiPermissions.cs" />
     <Compile Include="Utils\QueryBuilders\ApiQueryBuilder.cs" />
     <Compile Include="Utils\SessionManager\Authorizarion\AuthType.cs" />
@@ -133,6 +134,8 @@
     <Compile Include="Wrappers\Common\GeoTypePlace.cs" />
     <Compile Include="Wrappers\Common\Attachment.cs" />
     <Compile Include="Wrappers\Status\StatusFactory.cs" />
+    <Compile Include="Wrappers\Storage\StorageFactory.cs" />
+    <Compile Include="Wrappers\Storage\StorageResult.cs" />
     <Compile Include="Wrappers\Subscriptions\SubscriptionsFactory.cs" />
     <Compile Include="Wrappers\Subscriptions\SubscriptionsInfo.cs" />
     <Compile Include="Wrappers\Wall\WallEntry.cs" />

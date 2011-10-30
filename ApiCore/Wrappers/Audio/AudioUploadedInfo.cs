@@ -4,6 +4,8 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Procurios.Public;
+
 namespace ApiCore.Audio
 {
     public class AudioUploadedInfo
@@ -16,22 +18,8 @@ namespace ApiCore.Audio
 
         public AudioUploadedInfo(string jsonstr, string artist, string title)
         {
-            // отрезаем скобки, убираем кавычки
-            jsonstr = jsonstr.Replace("{", "").Replace("}", "").Replace("\"", "");
-
-            // разделяем строку на кусочки по  запятой с пробелами
-            Regex r = new Regex(@"\,[\s]*");
-            string[] json = r.Split(jsonstr);
-
-            // далее каждый кусок обрабатываем как ключ: значение
-            // и складываем их в таблицу
-            Hashtable h = new Hashtable();
-            r = new Regex(@"(\:[\s]+)");
-            foreach (string str in json)
-            {
-                string[] kv = r.Split(str);
-                h[kv[0]] = kv[2];
-            }
+            object jsonObj = JSON.JsonDecode(jsonstr);
+            Hashtable h = (Hashtable)JSON.JsonDecode(jsonstr);
 
             // присваиваем значения
             this.Server = (string)h["server"];

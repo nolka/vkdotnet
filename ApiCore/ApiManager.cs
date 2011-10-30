@@ -7,7 +7,9 @@ using System.ComponentModel;
 
 namespace ApiCore
 {
+
     public delegate void ApiManagerLogHandler(object sender, string msg);
+    public delegate void ApiManagerRequestCompleded(object sender, RequestResult result);
 
     public enum ResponseType
     {
@@ -15,11 +17,19 @@ namespace ApiCore
         Json
     }
 
+    public enum RequestResult
+    {
+        Running,
+        Success,
+        Error
+    }
+
     /// <summary>
     /// This class provides factory to communicating with vkontakte.api
     /// </summary>
     public class ApiManager
     {
+
         private ApiQueryBuilder builder;
         private SessionInfo session;
 
@@ -98,6 +108,15 @@ namespace ApiCore
             }
         }
 
+        public event ApiManagerRequestCompleded RequestCompleted;
+        protected virtual void OnRequestCompleted(RequestResult result)
+        {
+            if (this.RequestCompleted != null)
+            {
+                this.RequestCompleted(this, result);
+            }
+        }
+
         /// <summary>
         /// Set new session info
         /// </summary>
@@ -148,7 +167,26 @@ namespace ApiCore
             {
                 if (args[i + 1] != null)
                 {
-                    this.Params(args[i].ToString(), args[i + 1]);
+                    if (args[i + 1].GetType().ToString().Equals("System.Int32[]"))
+                    {
+                        this.Params(args[i].ToString(), CommonUtils.ArrayIntToCommaSeparatedString((int[])args[i + 1]));
+                    }
+                    else if (args[i + 1].GetType().ToString().Equals("System.String[]"))
+                    {
+                        this.Params(args[i].ToString(), CommonUtils.ArrayStringToCommaSeparatedString((string[])args[i + 1]));
+                    }
+                    else if (args[i + 1].GetType().ToString().Equals("System.Boolean"))
+                    {
+                        this.Params(args[i].ToString(), Convert.ToInt32(args[i + 1]));
+                    }
+                    else if (args[i + 1] is Object)
+                    {
+                        this.Params(args[i].ToString(), args[i + 1].ToString());
+                    }
+                    else
+                    {
+                        this.Params(args[i].ToString(), args[i + 1]);
+                    }
                 }
             }
             return this;
@@ -187,6 +225,7 @@ namespace ApiCore
                 if (isError == null)
                 {
                     this.MethodSuccessed = true;
+                    this.OnRequestCompleted(RequestResult.Success);
                 }
                 else
                 {
@@ -199,12 +238,14 @@ namespace ApiCore
                         ht[n.SelectSingleNode("key").InnerText.ToString()] = n.SelectSingleNode("value").InnerText.ToString();
                     }
 
+                    this.OnRequestCompleted(RequestResult.Error);
                     throw new ApiRequestErrorException(msg, code, ht);
                 }
                 //return this;
             }
             else
             {
+                this.OnRequestCompleted(RequestResult.Error);
                 throw new ApiRequestEmptyAnswerException("API Server returns an empty answer or request timeout");
             }
 

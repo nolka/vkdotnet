@@ -158,7 +158,7 @@ namespace ApiCore.Messages
         public List<Message> GetById(int[] msgIds, int? previewLen)
         {
             this.Manager.Method("messages.getById",
-                                   new object[] { "mid", msgIds });
+                                   new object[] { "mids", CommonUtils.ArrayIntToCommaSeparatedString(msgIds) });
             this.Manager.Execute();
             XmlNode resp = this.Manager.GetResponseXml();
 
@@ -250,22 +250,28 @@ namespace ApiCore.Messages
             return null;
         }
 
+
         /// <summary>
         /// Send personal message
         /// </summary>
-        /// <param name="userId">to user</param>
+        /// <param name="userId">user id if no chat id presented</param>
+        /// <param name="chatId">chat id if no user id presented</param>
+        /// <param name="title">message title</param>
         /// <param name="message">message body</param>
-        /// <param name="title">message title. null allowed</param>
-        /// <param name="type">message type. null allowed</param>
-        /// <returns>sent message id</returns>
-        public int Send(int userId, string message, string title, SendMessageType? type)
+        /// <param name="attachment">attachment</param>
+        /// <param name="forwardMessages">list of messages ids to forwarding</param>
+        /// <param name="type">message type</param>
+        /// <returns>id of message that was sended</returns>
+        public int Send(int? userId, int? chatId, string title, string message, MessageAttachment attachment, int[] forwardMessages, SendMessageType? type)
         {
             this.Manager.Method("messages.send",
-                                    new object[] { "uid", userId, 
-                                        "message", message, 
-                                        "title", title, 
+                                    new object[] { "uid", userId,
+                                        "chat_id", chatId,
+                                        "title", title,
+                                        "message", message,
+                                        "attachment", attachment,
+                                        "forward_messages", forwardMessages,
                                         "type", (int)type });
-
             string resp = this.Manager.Execute().GetResponseString();
             if (this.Manager.MethodSuccessed)
             {
@@ -275,20 +281,22 @@ namespace ApiCore.Messages
             return -1;
         }
 
+        /// <summary>
+        /// Send personal message
+        /// </summary>
+        /// <param name="userId">to user</param>
+        /// <param name="message">message body</param>
+        /// <param name="title">message title. null allowed</param>
+        /// <param name="type">message type. null allowed</param>
+        /// <returns>sent message id</returns>
+        public int Send(int userId, string message, string title, SendMessageType type)
+        {
+            return this.Send(userId, null, title, message, null, null, type);
+        }
+
         public int Send(int userId, string message, string title, MessageAttachment attachment)
         {
-            this.Manager.Method("messages.send",
-                                    new object[] { "uid", userId, 
-                                        "message", message, 
-                                        "title", title, 
-                                        "attachment", attachment.ToString() });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return Convert.ToInt32(x.SelectSingleNode("/response").InnerText);
-            }
-            return -1;
+            return this.Send(userId, null, title, message, attachment, null, null);
         }
 
 
