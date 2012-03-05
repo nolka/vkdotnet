@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
@@ -41,6 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="3rdParty\JSON.cs" />
+    <Compile Include="Handlers\BaseHandlers.cs" />
+    <Compile Include="Handlers\CapthaWnd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Handlers\CapthaWnd.Designer.cs">
+      <DependentUpon>CapthaWnd.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils\ApiPermissions.cs" />
     <Compile Include="Utils\QueryBuilders\ApiQueryBuilder.cs" />
     <Compile Include="Utils\SessionManager\Authorizarion\AuthType.cs" />
@@ -149,6 +157,9 @@
     <Folder Include="Wrappers\Video\" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Handlers\CapthaWnd.resx">
+      <DependentUpon>CapthaWnd.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Utils\SessionManager\Authorizarion\VKAuth\VKAuth.resx">
       <DependentUpon>VKAuth.cs</DependentUpon>
       <SubType>Designer</SubType>

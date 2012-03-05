@@ -57,6 +57,10 @@ namespace ApiCore
         /// <returns>Return this</returns>
         public ApiQueryBuilder Add(string key, string value)
         {
+            if (this.paramData.ContainsKey(key))
+            {
+                this.paramData.Remove(key);
+            }
             this.paramData.Add(key, value);
             return this;
         }

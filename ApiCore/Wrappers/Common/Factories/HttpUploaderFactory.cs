@@ -44,6 +44,9 @@ namespace ApiCore
         UploadFormProgressEventArgs formEventArgs;
         UploadFileProgressEventArgs filesEventArgs;
 
+        public int Timeout = 15000;
+        public int BufferSize = 4096;
+
         public HttpUploaderFactory()
         {
         }
@@ -102,6 +105,7 @@ namespace ApiCore
             long size = 0;
             foreach (string filename in files.Keys)
             {
+                //System.Windows.Forms.MessageBox.Show(files[filename] + " => " +new FileInfo(files[filename]).Length.ToString());
                 size += new FileInfo(files[filename]).Length;
             }
             return size;
@@ -159,33 +163,33 @@ namespace ApiCore
         private string fileHeaderTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
 
 
-        private long calculateContentLength(string boundary, byte[] boundaryBytes, NameValueCollection formItems, NameValueCollection files)
+        private long calculateContentLength(string boundary, NameValueCollection formItems, NameValueCollection files)
         {
             long size = 0;
-
-            if (formItems != null)
+            //В HTTP Заголовок ContentLength нужно записывать не длину символов, а длину байт.
+            byte[] boundaryBytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+            if (formItems != null && formItems.Count > 0)
             {
                 foreach (string formFieldName in formItems.Keys)
                 {
-                    size += this.formatFormUploadHeader(boundary, formFieldName, formItems[formFieldName]).Length + boundary.Length;
+                    size += System.Text.Encoding.ASCII.GetBytes(this.formatFormUploadHeader(boundary, formFieldName, formItems[formFieldName])).Length;
                 }
             }
 
-            if (files != null)
+            if (files != null && files.Count > 0)
             {
-                size +=this.getFilesLength(files);
+                size += this.getFilesLength(files);
                 foreach (string fileFieldName in files.Keys)
                 {
-                    size += this.formatFileUploadHeader(fileFieldName, Path.GetFileName(files[fileFieldName]), this.getMimeType(files[fileFieldName])).Length + boundary.Length;
+                    size += System.Text.Encoding.ASCII.GetBytes(this.formatFileUploadHeader(fileFieldName, Path.GetFileName(files[fileFieldName]), this.getMimeType(files[fileFieldName]))).Length + boundaryBytes.Length;
                 }
             }
-            size += 12;
+            size += boundaryBytes.Length;
             return size;
         }
 
         public string Upload(string url, NameValueCollection formItems, NameValueCollection files)
         {
-            //long length = 0;
             int totalItems = 0;
             int itemsCompleted = 0;
 
@@ -197,27 +201,27 @@ namespace ApiCore
 
             long totalFilesLength = this.getFilesLength(files);
 
-
-            #region init variables            
+            #region init variables
             // разделитель полей данных в POST запросе
             string boundary = "--xtr---" + DateTime.Now.Ticks.ToString("x");
             // создаем запрос к переданному нам URL
             HttpWebRequest httpRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+            httpRequest.ProtocolVersion = HttpVersion.Version11;
             httpRequest.Method = "POST"; // метод запроса - POST
+            httpRequest.Timeout = this.Timeout;
             httpRequest.KeepAlive = true; // постоянное подключение
-            httpRequest.UserAgent = "xternalx uploader/0.1a"; // копирайт, хуле
+            //httpRequest.SendChunked = false; // Отправка данных кусками
+            httpRequest.UserAgent = "xternalx uploader/0.1a"; // копирайт, хуле :)
             // указываем разделитель переданных параметров
             httpRequest.ContentType = "multipart/form-data; boundary=" + boundary;
-
-            //calculating content length
 
             // получаем байты разделителя, для того, чтобы записать их в запрос к URL
             byte[] boundaryBytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
-            httpRequest.ContentLength = this.calculateContentLength(boundary, boundaryBytes, formItems, files);
-            Stream reqStream = httpRequest.GetRequestStream(); // new System.IO.MemoryStream();
-            //Stream reqStream = new MemoryStream(); // new System.IO.MemoryStream();
+            httpRequest.ContentLength = this.calculateContentLength(boundary, formItems, files);
 
+            //FileStream reqStream = new FileStream("D:\\stream.txt", FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+            Stream reqStream = httpRequest.GetRequestStream();
 
             this.formEventArgs = new UploadFormProgressEventArgs();
             this.filesEventArgs = new UploadFileProgressEventArgs();
@@ -225,7 +229,7 @@ namespace ApiCore
             #endregion
 
             #region form upload
-            if (formItems != null)
+            if (formItems != null && formItems.Count > 0)
             {
                 formFieldsItems = formItems.Count;
                 totalItems += formFieldsItems;
@@ -238,8 +242,8 @@ namespace ApiCore
 
                     string formItem = this.formatFormUploadHeader(boundary, key, formItems[key]);// string.Format(formHeaderTemplate, key, formItems[key]);
                     byte[] formItemBytes = System.Text.Encoding.UTF8.GetBytes(formItem);
-                    
                     reqStream.Write(formItemBytes, 0, formItemBytes.Length);
+
                     this.updateFormUploadEvent(formItems[key].Length, formItems[key].Length, (float)((float)this.formEventArgs.CurrentBytesWritten / formItemBytes.Length) * 100);
 
                     itemsCompleted++;
@@ -250,69 +254,74 @@ namespace ApiCore
                 // дописали разделитель данных
                 reqStream.Write(boundaryBytes, 0, boundaryBytes.Length);
             }
+            else
+            {
+                // если список полей формы пуст, нужно дописать boundary
+                reqStream.Write(boundaryBytes, 0, boundaryBytes.Length);
+            }
             #endregion
 
-            if (files != null)
+            #region files upload
+            if (files != null && files.Count > 0)
             {
                 fileFieldsItems = files.Count;
                 filesEventArgs.TotalFiles = fileFieldsItems;
                 totalItems += fileFieldsItems;
                 // шаблон для передаваемых файлов "формы"
-                
+
 
                 foreach (string formFieldName in files.Keys)
                 {
                     this.initFileUpload(files[formFieldName], formFieldName);
 
                     string header = this.formatFileUploadHeader(formFieldName, Path.GetFileName(files[formFieldName]), this.getMimeType(files[formFieldName]));
-                    //System.Windows.Forms.MessageBox.Show(header);
+
                     byte[] headerbytes = System.Text.Encoding.UTF8.GetBytes(header);
 
                     reqStream.Write(headerbytes, 0, headerbytes.Length);
 
-                    FileStream fileStream = new FileStream(files[formFieldName], FileMode.Open, FileAccess.Read);
+                    FileStream fileStream = new FileStream(files[formFieldName], FileMode.Open, FileAccess.Read, FileShare.Read);
                     this.filesEventArgs.FileSize = new FileInfo(files[formFieldName]).Length;
-                    byte[] buffer = new byte[1024];
+                    byte[] buffer = new byte[this.BufferSize];
 
                     int bytesRead = 0;
 
-                    while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) > 0)
+                    try
                     {
-                        reqStream.Write(buffer, 0, bytesRead);
-                        this.updateFileUploadEvent(bytesRead, bytesRead, fileFieldsCompleted);
-                        this.OnFileUploadProgress(filesEventArgs);
+                        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            reqStream.Write(buffer, 0, bytesRead);
+                            reqStream.Flush();
+                            this.updateFileUploadEvent(bytesRead, bytesRead, fileFieldsCompleted);
+                            this.OnFileUploadProgress(filesEventArgs);
+                        }
+
+                        itemsCompleted++;
+                        fileFieldsCompleted++;
+                        filesEventArgs.UploadedFiles = fileFieldsCompleted;
+
+                        fileStream.Close();
+
+                        reqStream.Write(boundaryBytes, 0, boundaryBytes.Length);
+                    }
+                    catch (WebException wex)
+                    {
+                        // При WebException возможно, что поток на запись будет разорван принудительно, 
+                        // чтобы сделать возможным повторную отправку текущего файла, его нужно закрыть.
+                        fileStream.Close();
                     }
 
-                    itemsCompleted++;
-                    fileFieldsCompleted++;
-                    filesEventArgs.UploadedFiles = fileFieldsCompleted;
-
-                    fileStream.Close();
-
-                    reqStream.Write(boundaryBytes, 0, boundaryBytes.Length);
                 }
             }
+            #endregion
 
-            //httpRequest.ContentLength = reqStream.Length;
-            //byte[] buff = new byte[1024];
-            //int read = 0;
-
-            //Stream rr = httpRequest.GetRequestStream();
-            //reqStream.Position = 0;
-
-           // while((read = reqStream.Read(buff, 0, buff.Length))> 0)
-            //{
-           //     rr.Write(buff, 0, read);
-           // }
             reqStream.Close();
-
-           // rr.Close();
-
 
             HttpWebResponse r = (HttpWebResponse)httpRequest.GetResponse();
             StreamReader sr = new StreamReader(r.GetResponseStream());
 
             return sr.ReadToEnd();
+
         }
 
 

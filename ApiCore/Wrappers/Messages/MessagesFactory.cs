@@ -194,6 +194,23 @@ namespace ApiCore.Messages
             return null;
         }
 
+        public bool DeleteDialogs(int dialogId, bool isChat, int? offset, int? limit)
+        {
+            this.Manager.Method("messages.deleteDialog", new object[]{
+                (isChat)?"chat_id": "uid", 
+                "offset", offset,
+                "limit", limit
+            });
+            string resp = this.Manager.Execute().GetResponseString();
+            if (this.Manager.MethodSuccessed)
+            {
+                XmlDocument x = this.Manager.GetXmlDocument(resp);
+                XmlUtils.UseNode(x.SelectSingleNode("/response"));
+                return XmlUtils.BoolVal();
+            }
+            return false;
+        }
+
         /// <summary>
         /// Gets the messages history
         /// </summary>
@@ -374,6 +391,27 @@ namespace ApiCore.Messages
                 return ((x.SelectSingleNode("/response").InnerText.Equals("1")) ? true : false);
             }
             return false;
+        }
+
+        /// <summary>
+        /// Create LongPoll connection unit
+        /// </summary>
+        /// <returns>LongPollServerConnection unit</returns>
+        public LongPollServerConnection GetLongPollServerConnection()
+        {
+            ApiCore.Messages.LongPollServerConnection connection = new LongPollServerConnection(this.Manager);
+            return connection;
+        }
+
+        /// <summary>
+        /// Create LongPoll connection unit
+        /// </summary>
+        /// <returns>LongPollServerConnection unit</returns>
+        public LongPollServerConnection GetLongPollServerConnection(int waitTime)
+        {
+            ApiCore.Messages.LongPollServerConnection connection = new LongPollServerConnection(this.Manager);
+            connection.WaitTime = waitTime;
+            return connection;
         }
 
     }

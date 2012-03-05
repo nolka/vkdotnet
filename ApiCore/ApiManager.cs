@@ -4,12 +4,14 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 using System.ComponentModel;
+using ApiCore.Handlers;
 
 namespace ApiCore
 {
 
     public delegate void ApiManagerLogHandler(object sender, string msg);
     public delegate void ApiManagerRequestCompleded(object sender, RequestResult result);
+    public delegate void ApiManagerCapthaRequired(object sender, string url, string hash);
 
     public enum ResponseType
     {
@@ -22,6 +24,18 @@ namespace ApiCore
         Running,
         Success,
         Error
+    }
+
+    public enum ErrorCodes
+    {
+        UnknownError = 1,
+        ApplicationIsDisabled = 2,
+        IncorrectSignature = 4,
+        UserAuthFailed = 5,
+        TooManyRequests = 6,
+        PermissionToActionDenied = 7,
+        CapthaRequired = 14,
+        ParametersInvalid = 100
     }
 
     /// <summary>
@@ -43,7 +57,11 @@ namespace ApiCore
         /// </summary>
         public bool MethodSuccessed = false;
 
+        public string LastMethod = null;
+
         private static ApiManager instance = null;
+
+        private bool isCancelled = false;
 
         /// <summary>
         /// Debug mode shifter
@@ -90,6 +108,13 @@ namespace ApiCore
         {
             this.appId = si.AppId;
             this.session = si;
+            this.CapthaRequired += new ApiManagerCapthaRequired(ApiManager_CapthaRequired);
+        }
+
+        void ApiManager_CapthaRequired(object sender, string url, string hash)
+        {
+            ApiCore.Handlers.CapthaWnd wnd = new CapthaWnd(this, url, hash);
+            wnd.ShowDialog();
         }
 
         /// <summary>
@@ -114,6 +139,15 @@ namespace ApiCore
             if (this.RequestCompleted != null)
             {
                 this.RequestCompleted(this, result);
+            }
+        }
+
+        public event ApiManagerCapthaRequired CapthaRequired;
+        public void OnCapthaRequired(string capthaUrl, string hash)
+        {
+            if (this.CapthaRequired != null)
+            {
+                this.CapthaRequired(this, capthaUrl, hash);
             }
         }
 
@@ -143,6 +177,8 @@ namespace ApiCore
         public ApiManager Method(string methodName)
         {
             this.MethodSuccessed = false;
+            this.isCancelled = false;
+            this.LastMethod = methodName;
             ApiRequest.Timeout = this.Timeout;
             this.builder = new ApiQueryBuilder(this.appId, this.session);
             this.builder.Add("method", methodName);
@@ -211,45 +247,68 @@ namespace ApiCore
         /// <returns>himself</returns>
         public ApiManager Execute()
         {
-            this.apiResponseXml = null;
-            string req = this.builder.BuildQuery();
-            this.OnLog("Request string: " + req);
-            ApiRequest.Timeout = this.Timeout;
-            this.apiResponseString = ApiRequest.Send(req);
-            this.debugMsg(this.apiResponseString);
-            if (!this.apiResponseString.Equals("") || this.apiResponseString.Length > 0)
+            if (this.isCancelled)
+                return this;
+            try
             {
-                this.apiResponseXml = new XmlDocument();
-                this.apiResponseXml.LoadXml(this.apiResponseString);
-                XmlNode isError = this.apiResponseXml.SelectSingleNode("/error");
-                if (isError == null)
+                this.apiResponseXml = null;
+                string req = this.builder.BuildQuery();
+                this.OnLog("Request string: " + req);
+                ApiRequest.Timeout = this.Timeout;
+                this.apiResponseString = ApiRequest.Send(req);
+                this.debugMsg(this.apiResponseString);
+                if (!this.apiResponseString.Equals("") || this.apiResponseString.Length > 0)
                 {
-                    this.MethodSuccessed = true;
-                    this.OnRequestCompleted(RequestResult.Success);
+                    this.apiResponseXml = new XmlDocument();
+                    this.apiResponseXml.LoadXml(this.apiResponseString);
+                    XmlNode isError = this.apiResponseXml.SelectSingleNode("/error");
+                    if (isError == null)
+                    {
+                        this.MethodSuccessed = true;
+                        this.OnRequestCompleted(RequestResult.Success);
+                    }
+                    else
+                    {
+                        int code = Convert.ToInt32(isError.SelectSingleNode("error_code").InnerText);
+                        string msg = isError.SelectSingleNode("error_msg").InnerText;
+                        Hashtable ht = new Hashtable();
+                        XmlNodeList pparams = isError.SelectNodes("request_params/param");
+                        foreach (XmlNode n in pparams)
+                        {
+                            ht[n.SelectSingleNode("key").InnerText.ToString()] = n.SelectSingleNode("value").InnerText.ToString();
+                        }
+
+                        this.OnRequestCompleted(RequestResult.Error);
+                        throw new ApiRequestErrorException(msg, code, ht);
+                    }
+                    //return this;
                 }
                 else
                 {
-                    int code = Convert.ToInt32(isError.SelectSingleNode("error_code").InnerText);
-                    string msg = isError.SelectSingleNode("error_msg").InnerText;
-                    Hashtable ht = new Hashtable();
-                    XmlNodeList pparams = isError.SelectNodes("request_params/param");
-                    foreach (XmlNode n in pparams)
-                    {
-                        ht[n.SelectSingleNode("key").InnerText.ToString()] = n.SelectSingleNode("value").InnerText.ToString();
-                    }
-
                     this.OnRequestCompleted(RequestResult.Error);
-                    throw new ApiRequestErrorException(msg, code, ht);
+                    throw new ApiRequestEmptyAnswerException("API Server returns an empty answer or request timeout");
                 }
-                //return this;
             }
-            else
+            catch (ApiRequestErrorException e)
             {
-                this.OnRequestCompleted(RequestResult.Error);
-                throw new ApiRequestEmptyAnswerException("API Server returns an empty answer or request timeout");
+                if (e.Code == (int)ErrorCodes.CapthaRequired)
+                {
+                    if (!this.isCancelled)
+                    {
+                        XmlUtils.UseNode(this.apiResponseXml.SelectSingleNode("/error"));
+                        this.OnCapthaRequired(XmlUtils.String("captcha_img"), XmlUtils.String("captcha_sid"));
+                    }
+                    //return this;
+                }
+                else
+                    throw new ApiRequestErrorException(e.Message, e.Code, e.ParamsPassed);
             }
-
             return this;
+        }
+
+        public void Cancel()
+        {
+            this.isCancelled = true;
         }
 
         public XmlNode GetResponseXml()
@@ -284,25 +343,6 @@ namespace ApiCore
             return x;
         }
 
-        /// <summary>
-        /// Create LongPoll connection unit
-        /// </summary>
-        /// <returns>LongPollServerConnection unit</returns>
-        public ApiCore.Messages.LongPollServerConnection GetLongPollServerConnection()
-        {
-            ApiCore.Messages.LongPollServerConnection connection = new ApiCore.Messages.LongPollServerConnection(this);
-            return connection;
-        }
-
-        /// <summary>
-        /// Create LongPoll connection unit
-        /// </summary>
-        /// <returns>LongPollServerConnection unit</returns>
-        public ApiCore.Messages.LongPollServerConnection GetLongPollServerConnection(int waitTime)
-        {
-            ApiCore.Messages.LongPollServerConnection connection = new ApiCore.Messages.LongPollServerConnection(this);
-            connection.WaitTime = waitTime;
-            return connection;
-        }
+        
     }
 }
