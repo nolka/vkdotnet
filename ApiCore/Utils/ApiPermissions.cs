@@ -24,7 +24,9 @@ namespace ApiCore
         ExtendedMessages = 4096,
         ExtendedWall = 8192,
         Ads = 32768,
-        Documents = 131072
+        Documents = 131072,
+        Groups = 262144,
+        Notifications = 524288
     }
 
     public static class ScopeSettings
@@ -59,5 +61,6 @@ namespace ApiCore
         public static readonly string Messages = "messages";
         public static readonly string Ads = "ads";
         public static readonly string Offline = "offline";
+        public static readonly string NoHttps = "nohttps";
     }
 }

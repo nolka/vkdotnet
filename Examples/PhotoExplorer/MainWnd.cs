@@ -273,7 +273,7 @@ namespace PhotoExplorer
             {
                 this.AlbumsList.Enabled = false;
                 this.FriendList.Items.Clear();
-                this.friendList = this.friendFactory.Get(FriendNameCase.Nominative, null, null, null, new string[] { "uid", "first_name", "nickname", "last_name" });
+                this.friendList = this.friendFactory.Get( Convert.ToInt32(UserId.Text), FriendNameCase.Nominative, null, null, null, new string[] { "uid", "first_name", "nickname", "last_name" });
                 for (int i = 0; i < this.friendList.Count; i++)
                 {
                     this.FriendList.Items.Add(this.friendList[i]);

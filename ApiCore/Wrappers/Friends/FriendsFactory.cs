@@ -75,9 +75,13 @@ namespace ApiCore.Friends
         /// <param name="nameCase">friends name case</param>
         /// <param name="fields">fields array to be fetched</param>
         /// <returns>friend list</returns>
-        public List<Friend> Get(string nameCase, int? count, int? offset, int? listId,  string[] fields)
+        public List<Friend> Get(int? userId, string nameCase, int? count, int? offset, int? listId,  string[] fields)
         {
             this.Manager.Method("friends.get");
+            if (userId != null)
+            {
+                this.Manager.Params("uid", userId);
+            }
             if (nameCase != null)
             {
                 this.Manager.Params("name_case", nameCase);

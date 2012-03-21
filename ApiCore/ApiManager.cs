@@ -10,6 +10,8 @@ namespace ApiCore
 {
 
     public delegate void ApiManagerLogHandler(object sender, string msg);
+    public delegate void ApiManagerResponseData(object sender, string responseString, bool isCacheResult);
+    public delegate void ApiManagerCacheUpdated(object sender, string key, string cache);
     public delegate void ApiManagerRequestCompleded(object sender, RequestResult result);
     public delegate void ApiManagerCapthaRequired(object sender, string url, string hash);
 
@@ -59,9 +61,14 @@ namespace ApiCore
 
         public string LastMethod = null;
 
+        private string cacheString = null;
+
+        private Dictionary<string, string> cache = null;
+
         private static ApiManager instance = null;
 
         private bool isCancelled = false;
+        private bool isCacheEnabled = false;
 
         /// <summary>
         /// Debug mode shifter
@@ -72,7 +79,7 @@ namespace ApiCore
         {
             if (this.DebugMode)
             {
-                this.OnLog("DBG: " + msg + "\n");
+                this.Log("DBG: " + msg + "\n");
             }
         }
 
@@ -108,7 +115,7 @@ namespace ApiCore
         {
             this.appId = si.AppId;
             this.session = si;
-            this.CapthaRequired += new ApiManagerCapthaRequired(ApiManager_CapthaRequired);
+            this.OnCapthaRequired += new ApiManagerCapthaRequired(ApiManager_CapthaRequired);
         }
 
         void ApiManager_CapthaRequired(object sender, string url, string hash)
@@ -117,39 +124,63 @@ namespace ApiCore
             wnd.ShowDialog();
         }
 
+        #region events
+
         /// <summary>
         /// When new log data available this event occurs
         /// </summary>
-        public event ApiManagerLogHandler Log;
+        public event ApiManagerLogHandler OnLog;
         /// <summary>
         /// Logging event function
         /// </summary>
         /// <param name="msg">Message to log</param>
-        protected virtual void OnLog(string msg)
+        protected virtual void Log(string msg)
         {
-            if (this.Log != null)
+            if (this.OnLog != null)
             {
-                this.Log(this, msg);
+                this.OnLog(this, msg);
             }
         }
 
-        public event ApiManagerRequestCompleded RequestCompleted;
-        protected virtual void OnRequestCompleted(RequestResult result)
+        public event ApiManagerRequestCompleded OnRequestCompleted;
+        protected virtual void RequestCompleted(RequestResult result)
         {
-            if (this.RequestCompleted != null)
+            if (this.OnRequestCompleted != null)
             {
-                this.RequestCompleted(this, result);
+                this.OnRequestCompleted(this, result);
             }
         }
 
-        public event ApiManagerCapthaRequired CapthaRequired;
-        public void OnCapthaRequired(string capthaUrl, string hash)
+        public event ApiManagerCapthaRequired OnCapthaRequired;
+        public void CapthaRequired(string capthaUrl, string hash)
         {
-            if (this.CapthaRequired != null)
+            if (this.OnCapthaRequired != null)
             {
-                this.CapthaRequired(this, capthaUrl, hash);
+                this.OnCapthaRequired(this, capthaUrl, hash);
             }
         }
+
+
+        public event ApiManagerResponseData OnResponseData;
+        public void ResponseData(string responseString, bool isCacheResult)
+        {
+            if (this.OnResponseData != null)
+            {
+                this.OnResponseData(this, responseString, isCacheResult);
+            }
+        }
+
+        public event ApiManagerCacheUpdated OnCacheUpdated;
+        public void CacheUpdated(string key, string cache)
+        {
+            if (this.OnCacheUpdated != null)
+            {
+                this.OnCacheUpdated(this, key, cache);
+            }
+        }
+
+#endregion
+
 
         /// <summary>
         /// Set new session info
@@ -167,6 +198,63 @@ namespace ApiCore
         protected SessionInfo GetSession()
         {
             return this.session;
+        }
+
+
+        public void EnableCaching(bool clearIfExists = false)
+        {
+            this.isCacheEnabled = true;
+            if (this.cache == null)
+                this.ClearCacheData();
+            if (clearIfExists && this.cache != null && this.cache.Count > 0)
+                this.ClearCacheData();
+
+        }
+
+        public void DisableCaching(bool clearCache = false)
+        {
+            this.isCacheEnabled = false;
+            if (clearCache)
+                this.ClearCacheData();
+        }
+
+        public void AppendCache(string key, string cache)
+        {
+            key = CommonUtils.Md5(key).ToLower();
+            if (this.cache.ContainsKey(key))
+            {
+                if(this.cache[key].Equals(cache))
+                {}
+                else
+                {
+                    this.cache.Remove(key);
+                    this.cache.Add(key, cache);
+                    this.CacheUpdated(key, cache);
+                }
+            }
+            else
+            {
+                this.cache.Add(key, cache);
+                this.CacheUpdated(key, cache);
+            }
+        }
+
+        private string getFromCache(string key)
+        {
+            if (this.cache.ContainsKey(key))
+                return this.cache[key];
+            else
+                return null;
+        }
+
+        public void SetCacheString(string cache)
+        {
+            this.cacheString = cache;
+        }
+
+        public void ClearCacheData()
+        {
+            this.cache = new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -247,25 +335,56 @@ namespace ApiCore
         /// <returns>himself</returns>
         public ApiManager Execute()
         {
+            return this.getResponse();
+        }
+
+        public ApiManager ExecuteFromCacheString(string cacheString)
+        {
+            this.SetCacheString(cacheString);
+            return this.getResponse();
+        }
+
+        public ApiManager ExecuteFromCacheByKey(string key)
+        {
+            this.SetCacheString(this.getFromCache(key));
+            return this.getResponse();
+        }
+
+        private ApiManager getResponse()
+        {
             if (this.isCancelled)
                 return this;
             try
             {
                 this.apiResponseXml = null;
                 string req = this.builder.BuildQuery();
-                this.OnLog("Request string: " + req);
-                ApiRequest.Timeout = this.Timeout;
-                this.apiResponseString = ApiRequest.Send(req);
-                this.debugMsg(this.apiResponseString);
+                if (this.cacheString == null)
+                {
+                    this.Log("Request string: " + req);
+                    ApiRequest.Timeout = this.Timeout;
+                    this.apiResponseString = ApiRequest.Send(req);
+                    if (this.isCacheEnabled)
+                    {
+                        this.AppendCache(req, this.apiResponseString);
+                    }
+                    this.debugMsg(this.apiResponseString);
+                }
+                else
+                {
+                    this.apiResponseString = cacheString;
+                    this.debugMsg("FROM CACHE: "+this.apiResponseString);
+                }
+                
                 if (!this.apiResponseString.Equals("") || this.apiResponseString.Length > 0)
                 {
+                    this.ResponseData(this.apiResponseString, (cacheString != null));
                     this.apiResponseXml = new XmlDocument();
                     this.apiResponseXml.LoadXml(this.apiResponseString);
                     XmlNode isError = this.apiResponseXml.SelectSingleNode("/error");
                     if (isError == null)
                     {
                         this.MethodSuccessed = true;
-                        this.OnRequestCompleted(RequestResult.Success);
+                        this.RequestCompleted(RequestResult.Success);
                     }
                     else
                     {
@@ -278,14 +397,14 @@ namespace ApiCore
                             ht[n.SelectSingleNode("key").InnerText.ToString()] = n.SelectSingleNode("value").InnerText.ToString();
                         }
 
-                        this.OnRequestCompleted(RequestResult.Error);
+                        this.RequestCompleted(RequestResult.Error);
                         throw new ApiRequestErrorException(msg, code, ht);
                     }
                     //return this;
                 }
                 else
                 {
-                    this.OnRequestCompleted(RequestResult.Error);
+                    this.RequestCompleted(RequestResult.Error);
                     throw new ApiRequestEmptyAnswerException("API Server returns an empty answer or request timeout");
                 }
             }
@@ -296,7 +415,7 @@ namespace ApiCore
                     if (!this.isCancelled)
                     {
                         XmlUtils.UseNode(this.apiResponseXml.SelectSingleNode("/error"));
-                        this.OnCapthaRequired(XmlUtils.String("captcha_img"), XmlUtils.String("captcha_sid"));
+                        this.CapthaRequired(XmlUtils.String("captcha_img"), XmlUtils.String("captcha_sid"));
                     }
                     //return this;
                 }
@@ -305,6 +424,7 @@ namespace ApiCore
             }
             return this;
         }
+
 
         public void Cancel()
         {

@@ -8,9 +8,19 @@ namespace ApiCore
     {
         public ApiManager Manager;
 
+        public bool CacheRequests = false;
+
         public BaseFactory(ApiManager manager)
         {
             this.Manager = manager;
         }
+
+        public bool LoadFromXmlCacheString(string cacheString)
+        {
+            return false;
+        }
+
+        public bool SaveToXmlCacheString()
+        { return false; }
     }
 }

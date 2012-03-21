@@ -76,9 +76,9 @@ namespace ApiCore.Messages
                                 break;
                             }
                             message.Title = XmlUtils.String("title"); //msgNode.SelectSingleNode("title").InnerText;
+                            message.UserId = XmlUtils.Int("uid"); //Convert.ToInt32(msgNode.SelectSingleNode("uid").InnerText);
                         }
                     }
-                    message.UserId = XmlUtils.Int("uid"); //Convert.ToInt32(msgNode.SelectSingleNode("uid").InnerText);
                     // делаем рутиную работу про преобразованию xml в объекты
                     message.Date = CommonUtils.FromUnixTime(XmlUtils.Int("date")); // CommonUtils.FromUnixTime(msgNode.SelectSingleNode("date").InnerText);
                     message.State = (MessageState)XmlUtils.Int("read_state"); //(MessageState)Convert.ToInt32(msgNode.SelectSingleNode("read_state").InnerText);
@@ -279,7 +279,7 @@ namespace ApiCore.Messages
         /// <param name="forwardMessages">list of messages ids to forwarding</param>
         /// <param name="type">message type</param>
         /// <returns>id of message that was sended</returns>
-        public int Send(int? userId, int? chatId, string title, string message, MessageAttachment attachment, int[] forwardMessages, SendMessageType? type)
+        public int Send(int? userId, int? chatId, string title, string message, MessageAttachment attachment, int?[] forwardMessages, SendMessageType? type)
         {
             this.Manager.Method("messages.send",
                                     new object[] { "uid", userId,
@@ -313,7 +313,7 @@ namespace ApiCore.Messages
 
         public int Send(int userId, string message, string title, MessageAttachment attachment)
         {
-            return this.Send(userId, null, title, message, attachment, null, null);
+            return this.Send(userId, null, title, message, attachment, null, SendMessageType.StandardMessage);
         }
 
 
