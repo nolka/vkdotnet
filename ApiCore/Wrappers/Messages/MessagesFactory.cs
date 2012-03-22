@@ -158,7 +158,7 @@ namespace ApiCore.Messages
         public List<Message> GetById(int[] msgIds, int? previewLen)
         {
             this.Manager.Method("messages.getById",
-                                   new object[] { "mids", CommonUtils.ArrayIntToCommaSeparatedString(msgIds) });
+                                   new object[] { "mids", CommonUtils.IntArrayToCommaSeparatedString(msgIds) });
             this.Manager.Execute();
             XmlNode resp = this.Manager.GetResponseXml();
 
@@ -279,7 +279,7 @@ namespace ApiCore.Messages
         /// <param name="forwardMessages">list of messages ids to forwarding</param>
         /// <param name="type">message type</param>
         /// <returns>id of message that was sended</returns>
-        public int Send(int? userId, int? chatId, string title, string message, MessageAttachment attachment, int?[] forwardMessages, SendMessageType? type)
+        public int Send(int? userId, int? chatId, string title, string message, MessageAttachment[] attachment, int?[] forwardMessages, SendMessageType? type)
         {
             this.Manager.Method("messages.send",
                                     new object[] { "uid", userId,
@@ -313,7 +313,12 @@ namespace ApiCore.Messages
 
         public int Send(int userId, string message, string title, MessageAttachment attachment)
         {
-            return this.Send(userId, null, title, message, attachment, null, SendMessageType.StandardMessage);
+            return this.Send(userId, null, title, message, new MessageAttachment[]{ attachment}, null, SendMessageType.StandardMessage);
+        }
+
+        public int Send(int userId, string message, string title, MessageAttachment[] attachments)
+        {
+            return this.Send(userId, null, title, message,  attachments , null, SendMessageType.StandardMessage);
         }
 
 
@@ -399,7 +404,7 @@ namespace ApiCore.Messages
         /// <returns>LongPollServerConnection unit</returns>
         public LongPollServerConnection GetLongPollServerConnection()
         {
-            ApiCore.Messages.LongPollServerConnection connection = new LongPollServerConnection(this.Manager);
+            LongPollServerConnection connection = new LongPollServerConnection(this.Manager);
             return connection;
         }
 
@@ -409,7 +414,7 @@ namespace ApiCore.Messages
         /// <returns>LongPollServerConnection unit</returns>
         public LongPollServerConnection GetLongPollServerConnection(int waitTime)
         {
-            ApiCore.Messages.LongPollServerConnection connection = new LongPollServerConnection(this.Manager);
+            LongPollServerConnection connection = new LongPollServerConnection(this.Manager);
             connection.WaitTime = waitTime;
             return connection;
         }

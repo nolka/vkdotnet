@@ -34,7 +34,7 @@ namespace ApiCore
             return new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(Convert.ToDouble(time));
         }
 
-        public static string[] ArrayIntToString(int[] integers)
+        public static string[] IntArrayToString(int[] integers)
         {
             string[] arr = new string[integers.Length];
             int i=0;
@@ -45,7 +45,7 @@ namespace ApiCore
             return arr;
         }
 
-        public static string ArrayIntToCommaSeparatedString(int[] integers)
+        public static string IntArrayToCommaSeparatedString(int[] integers)
         {
             StringBuilder sb = new StringBuilder(integers.Length);
             for (int i=0; i<= integers.Length; i++)
@@ -59,9 +59,27 @@ namespace ApiCore
             return sb.ToString();
         }
 
-        public static string ArrayStringToCommaSeparatedString(string[] strings)
+        public static string StringArrayToCommaSeparatedString(string[] strings)
         {
             return string.Join(",", strings);
         }
+
+        public static string[] ObjectsArrayToStringArray(object[] objects)
+        {
+            string[] strings = new string[objects.Length];
+            int i=0;
+            foreach(object o in objects)
+            {
+                strings[i] = o.ToString();
+                i++;
+            }
+            return strings;
+        }
+
+        public static string ObjectsArrayToCommaSeparatedString(object[] objects)
+        {
+            return CommonUtils.StringArrayToCommaSeparatedString(CommonUtils.ObjectsArrayToStringArray(objects));
+        }
+
     }
 }

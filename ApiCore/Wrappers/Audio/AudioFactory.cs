@@ -64,7 +64,7 @@ namespace ApiCore.Audio
             }
             if (audioIds != null)
             {
-                this.Manager.Params("aids", string.Join(",", CommonUtils.ArrayIntToString(audioIds)));
+                this.Manager.Params("aids", string.Join(",", CommonUtils.IntArrayToString(audioIds)));
             }
 
             

@@ -170,7 +170,7 @@ namespace ApiCore.Photos
             }
             if (albums != null)
             {
-                this.Manager.Params("aids", string.Join(",", CommonUtils.ArrayIntToString(albums)));
+                this.Manager.Params("aids", string.Join(",", CommonUtils.IntArrayToString(albums)));
             }
 
             XmlNode result = this.Manager.Execute().GetResponseXml();
@@ -188,7 +188,7 @@ namespace ApiCore.Photos
             this.Manager.Params("aid", albumId);
             if (photoIds != null)
             {
-                this.Manager.Params("pids", string.Join(",", CommonUtils.ArrayIntToString(photoIds)));
+                this.Manager.Params("pids", string.Join(",", CommonUtils.IntArrayToString(photoIds)));
             }
             if (count != null)
             {

@@ -291,17 +291,22 @@ namespace ApiCore
             {
                 if (args[i + 1] != null)
                 {
+
                     if (args[i + 1].GetType().ToString().Equals("System.Int32[]"))
                     {
-                        this.Params(args[i].ToString(), CommonUtils.ArrayIntToCommaSeparatedString((int[])args[i + 1]));
+                        this.Params(args[i].ToString(), CommonUtils.IntArrayToCommaSeparatedString((int[])args[i + 1]));
                     }
                     else if (args[i + 1].GetType().ToString().Equals("System.String[]"))
                     {
-                        this.Params(args[i].ToString(), CommonUtils.ArrayStringToCommaSeparatedString((string[])args[i + 1]));
+                        this.Params(args[i].ToString(), CommonUtils.StringArrayToCommaSeparatedString((string[])args[i + 1]));
                     }
                     else if (args[i + 1].GetType().ToString().Equals("System.Boolean"))
                     {
                         this.Params(args[i].ToString(), Convert.ToInt32(args[i + 1]));
+                    }
+                    else if (args[i + 1].GetType().ToString().Equals("ApiCore.MessageAttachment[]"))
+                    {
+                        this.Params(args[i].ToString(), CommonUtils.ObjectsArrayToCommaSeparatedString((object[])args[i + 1]));
                     }
                     else if (args[i + 1] is Object)
                     {

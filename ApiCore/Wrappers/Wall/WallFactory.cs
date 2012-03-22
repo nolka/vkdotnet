@@ -211,9 +211,15 @@ namespace ApiCore.Wall
         /// <returns>message id</returns>
         public int Post(int? ownerId, string message, MessageAttachment attachment, string[] services)
         {
+            return this.Post(ownerId, message, new MessageAttachment[]{ attachment}, services);
+        }
+
+
+        public int Post(int? ownerId, string message, MessageAttachment[] attachments, string[] services)
+        {
             this.Manager.Method("wall.post", new object[] { "owner_id", ownerId, 
                                     "message", message, 
-                                    "attachment", attachment.ToString(), 
+                                    "attachment", attachments, 
                                     "services", ((services != null)?String.Join(",", services):null) });
             string resp = this.Manager.Execute().GetResponseString();
             if (this.Manager.MethodSuccessed)
@@ -224,6 +230,10 @@ namespace ApiCore.Wall
             return -1;
         }
 
+        public int Post(int? ownerId, string message, MessageAttachment[] attachments)
+        {
+            return this.Post(ownerId, message, attachments, null);
+        }
 
         /// <summary>
         /// Delete wall post
