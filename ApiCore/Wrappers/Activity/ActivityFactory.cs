@@ -8,6 +8,7 @@ namespace ApiCore.Activity
     /// <summary>
     /// Represents an a Vkontakte activity manager, that can get, or set user activities and actoivities of her friends
     /// </summary>
+    [Obsolete("This service is marked as deprecated in API")]
     public class ActivityFactory: BaseFactory
     {
 
@@ -48,18 +49,15 @@ namespace ApiCore.Activity
                 {
                     this.Manager.Params("uid", userId);//((type == MessageType.Outgoing) ? "1" : "0"));;
                 }
-                string resp = this.Manager.Execute().GetResponseString();
-                if (this.Manager.MethodSuccessed)
-                {
-                    XmlDocument x = this.Manager.GetXmlDocument(resp);
-                    if (x.SelectSingleNode("/response").InnerText.Equals("0"))
-                    {
-                        return null;
-                    }
 
-                    return this.buildEntryList(x);
+                XmlDocument x = this.Manager.Execute().GetResponseXml();
+                if (x.InnerText.Equals("0"))
+                {
+                    return null;
                 }
-                return null;
+
+                return this.buildEntryList(x);
+
         }
 
         /// <summary>
@@ -74,11 +72,9 @@ namespace ApiCore.Activity
             {
                 this.Manager.Params("uid", userId);//((type == MessageType.Outgoing) ? "1" : "0"));;
             }
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
+
+                XmlDocument x = this.Manager.Execute().GetResponseXml();
+                if (x.InnerText.Equals("0"))
                 {
                     return null;
                 }
@@ -88,8 +84,6 @@ namespace ApiCore.Activity
                 act.Text = actNode.SelectSingleNode("activity").InnerText;
                 act.Date = CommonUtils.FromUnixTime(actNode.SelectSingleNode("time").InnerText);
                 return act;
-            }
-            return null;
         }
 
         /// <summary>
@@ -101,13 +95,10 @@ namespace ApiCore.Activity
         {
             this.Manager.Method("activity.set");
             this.Manager.Params("text", message);
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return Convert.ToInt32(x.SelectSingleNode("/response").InnerText);
-            }
-            return -1;
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return Convert.ToInt32(x.InnerText);
+
         }
 
     }

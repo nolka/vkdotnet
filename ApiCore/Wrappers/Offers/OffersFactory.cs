@@ -8,6 +8,7 @@ namespace ApiCore.Offers
     /// <summary>
     /// Represent Offers wrapper
     /// </summary>
+    [Obsolete("This service is not used in current vk.com site. Date 2012.03.23")]
     public class OffersFactory: BaseFactory
     {
         /// <summary>
@@ -29,13 +30,10 @@ namespace ApiCore.Offers
         {
             this.Manager.Method("offers.edit");
             this.Manager.Params("message", message);
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText == "1") ? true : false);
-            }
-            return false;
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return ((x.InnerText == "1") ? true : false);
+
         }
 
         /// <summary>
@@ -45,13 +43,10 @@ namespace ApiCore.Offers
         public bool Open()
         {
             this.Manager.Method("offers.open");
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText == "1") ? true : false);
-            }
-            return false;
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return ((x.InnerText == "1") ? true : false);
+
         }
 
         /// <summary>
@@ -61,13 +56,10 @@ namespace ApiCore.Offers
         public bool Close()
         {
             this.Manager.Method("offers.close");
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText == "1") ? true : false);
-            }
-            return false;
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return ((x.InnerText == "1") ? true : false);
+
         }
 
         private List<OfferEntry> buildFriendsEntryList(XmlDocument x)
@@ -153,17 +145,15 @@ namespace ApiCore.Offers
             {
                 this.Manager.Params("uids", userIds);
             }
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            if (x.InnerText.Equals(""))
             {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
-                {
-                    return null;
-                }
-                return this.buildFriendsEntryList(x);
+                this.Manager.DebugMessage("No offers found");
+                return null;
             }
-            return null;
+            return this.buildFriendsEntryList(x);
+
         }
 
         /// <summary>
@@ -183,17 +173,14 @@ namespace ApiCore.Offers
             {
                 this.Manager.Params("offset", offset);
             }
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
+      
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            if (x.InnerText.Equals(""))
             {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
-                {
-                    return null;
-                }
-                return this.buildFriendsInboundResponsesEntryList(x);
+                return null;
             }
-            return null;
+            return this.buildFriendsInboundResponsesEntryList(x);
+
         }
 
         /// <summary>
@@ -213,17 +200,13 @@ namespace ApiCore.Offers
             {
                 this.Manager.Params("offset", offset);
             }
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
+
+                XmlDocument x = this.Manager.Execute().GetResponseXml();
+                if (x.InnerText.Equals(""))
                 {
                     return null;
                 }
                 return this.buildFriendsOutboundResponsesEntryList(x);
-            }
-            return null;
         }
 
         /// <summary>
@@ -235,13 +218,10 @@ namespace ApiCore.Offers
         {
             this.Manager.Method("offers.accept");
             this.Manager.Params("uid", offer_uid);
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText == "1") ? true : false);
-            }
-            return false;
+
+                XmlDocument x = this.Manager.Execute().GetResponseXml();
+                return ((x.InnerText == "1") ? true : false);
+
         }
 
         /// <summary>
@@ -253,13 +233,10 @@ namespace ApiCore.Offers
         {
             this.Manager.Method("offers.refuse");
             this.Manager.Params("uid", offer_uid);
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText == "1") ? true : false);
-            }
-            return false;
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return ((x.InnerText == "1") ? true : false);
+
         }
 
         /// <summary>
@@ -271,13 +248,10 @@ namespace ApiCore.Offers
         {
             this.Manager.Method("offers.setResponseViewed");
             this.Manager.Params("uids", offer_uids);
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText == "1") ? true : false);
-            }
-            return false;
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return ((x.InnerText == "1") ? true : false);
+
         }
 
         /// <summary>
@@ -289,13 +263,9 @@ namespace ApiCore.Offers
         {
             this.Manager.Method("offers.deleteResponses");
             this.Manager.Params("uids", offer_uids);
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText == "1") ? true : false);
-            }
-            return false;
+ 
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return ((x.InnerText == "1") ? true : false);
         }
         
     }

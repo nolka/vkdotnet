@@ -112,12 +112,11 @@ namespace ApiCore.Messages
                 this.Manager.Params("filters", (int)filter);
             }
 
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
+
+                XmlDocument x = this.Manager.Execute().GetResponseXml();
+                if (x.InnerText.Equals(""))
                 {
+                    this.Manager.DebugMessage(string.Format("No messages found with Type: {0}; MessageFilter: {1}; Offset: {2}", type, filter, timeOffset));
                     return null;
                 }
 
@@ -141,7 +140,7 @@ namespace ApiCore.Messages
                     return this.buildMessagesList(x, MessageType.Outgoing);
                     //break;
                 }
-            }
+            
             return null;
         }
 
@@ -180,18 +179,16 @@ namespace ApiCore.Messages
                                         "count", count, 
                                         "preview_length", previewLen });
 
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
+
+                XmlDocument x = this.Manager.Execute().GetResponseXml();
+                if (x.InnerText.Equals(""))
                 {
+                    this.Manager.DebugMessage("No dialogs found");
                     return null;
                 }
 
                 return this.buildMessagesList(x, MessageType.Dialogs);
-            }
-            return null;
+
         }
 
         public bool DeleteDialogs(int dialogId, bool isChat, int? offset, int? limit)
@@ -201,14 +198,10 @@ namespace ApiCore.Messages
                 "offset", offset,
                 "limit", limit
             });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                XmlUtils.UseNode(x.SelectSingleNode("/response"));
-                return XmlUtils.BoolVal();
-            }
-            return false;
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            XmlUtils.UseNode(x);
+            return XmlUtils.BoolVal();
         }
 
         /// <summary>
@@ -225,18 +218,15 @@ namespace ApiCore.Messages
                                     "offset", offset, 
                                     "count", count });
 
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
+
+                XmlDocument x = this.Manager.Execute().GetResponseXml();
+                if (x.InnerText.Equals(""))
                 {
+                    this.Manager.DebugMessage(string.Format("No history found with user id {0}", userId));
                     return null;
                 }
 
                 return this.buildMessagesList(x, MessageType.History);
-            }
-            return null;
         }
 
         /// <summary>
@@ -253,18 +243,16 @@ namespace ApiCore.Messages
                                         "offset", offset, 
                                         "count", count });
 
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
+
+                XmlDocument x = this.Manager.Execute().GetResponseXml();
+                if (x.InnerText.Equals(""))
                 {
+                    this.Manager.DebugMessage(string.Format("No messages found by query '{0}'", query));
                     return null;
                 }
 
                 return this.buildMessagesList(x, MessageType.Dialogs);
-            }
-            return null;
+
         }
 
 
@@ -289,13 +277,10 @@ namespace ApiCore.Messages
                                         "attachment", attachment,
                                         "forward_messages", forwardMessages,
                                         "type", (int)type });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return Convert.ToInt32(x.SelectSingleNode("/response").InnerText);
-            }
-            return -1;
+  
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return Convert.ToInt32(x.InnerText);
+
         }
 
         /// <summary>
@@ -334,13 +319,15 @@ namespace ApiCore.Messages
                                 { 
                                     "mids", String.Join(",", Array.ConvertAll<int, string>( msg_ids, Convert.ToString)) 
                                 });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText.Equals("1")) ? true : false);
-            }
-            return false;
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return ((x.InnerText.Equals("1")) ? true : false);
+
+        }
+
+        public bool MarkAsNew(int msgId)
+        {
+            return this.MarkAsNew(new int[] { msgId });
         }
 
         /// <summary>
@@ -355,13 +342,14 @@ namespace ApiCore.Messages
                                 { 
                                     "mids", String.Join(",", Array.ConvertAll<int, string>( msg_ids, Convert.ToString)) 
                                 });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText.Equals("1")) ? true : false);
-            }
-            return false;
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return ((x.InnerText.Equals("1")) ? true : false);
+
+        }
+
+        public bool MarkAsRead(int msgId)
+        {
+            return this.MarkAsRead(new int[] { msgId });
         }
 
         /// <summary>
@@ -372,13 +360,9 @@ namespace ApiCore.Messages
         public bool Delete(int msg_id)
         {
             this.Manager.Method("messages.delete", new object[] { "mid", msg_id });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText.Equals("1")) ? true : false);
-            }
-            return false;
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return (x.InnerText.Equals("1") ? true : false);
         }
 
         /// <summary>
@@ -389,13 +373,9 @@ namespace ApiCore.Messages
         public bool Restore(int msg_id)
         {
             this.Manager.Method("messages.restore", new object[] { "mid", msg_id });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText.Equals("1")) ? true : false);
-            }
-            return false;
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return (x.InnerText.Equals("1") ? true : false);
         }
 
         /// <summary>

@@ -77,42 +77,21 @@ namespace ApiCore.Friends
         /// <returns>friend list</returns>
         public List<Friend> Get(int? userId, string nameCase, int? count, int? offset, int? listId,  string[] fields)
         {
-            this.Manager.Method("friends.get");
-            if (userId != null)
+            this.Manager.Method("friends.get", new object[] { "uid", userId, 
+                "name_case", nameCase, 
+                "count", count, 
+                "offset", offset, 
+                "lid", listId, 
+                "fields", String.Join(",", fields) });
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            if (x.InnerText.Equals(""))
             {
-                this.Manager.Params("uid", userId);
+                this.Manager.DebugMessage(string.Format("Friend id {0} list is empty", userId));
+                return null;
             }
-            if (nameCase != null)
-            {
-                this.Manager.Params("name_case", nameCase);
-            }
-            if (count != null)
-            {
-                this.Manager.Params("count", count);
-            }
-            if (offset != null)
-            {
-                this.Manager.Params("offset", offset);
-            }
-            if (listId != null)
-            {
-                this.Manager.Params("lid", listId);
-            }
-            if (fields != null)
-            {
-                this.Manager.Params("fields", String.Join(",",fields));
-            }
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
-                {
-                    return null;
-                }
-                return this.buildFriendsEntryList(x);
-            }
-            return null;
+            return this.buildFriendsEntryList(x);
+
         }
 
     }

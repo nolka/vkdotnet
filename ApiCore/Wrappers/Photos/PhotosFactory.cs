@@ -163,243 +163,107 @@ namespace ApiCore.Photos
 
         public List<AlbumEntry> GetAlbums(int? userId, int[] albums)
         {
-            this.Manager.Method("photos.getAlbums");
-            if (userId != null)
-            {
-                this.Manager.Params("uid", userId);
-            }
-            if (albums != null)
-            {
-                this.Manager.Params("aids", string.Join(",", CommonUtils.IntArrayToString(albums)));
-            }
-
+            this.Manager.Method("photos.getAlbums", new object[]{"uid", userId, 
+                                                                "aids", string.Join(",", CommonUtils.IntArrayToString(albums)) });
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                return this.buildAlbumsList(result);
-            }
-            return null;
+
+            return this.buildAlbumsList(result);
         }
 
         public List<PhotoEntryFull> GetPhotos(int userId, int albumId, int[] photoIds, int? count, int? offset)
         {
-            this.Manager.Method("photos.get");
-            this.Manager.Params("uid", userId);
-            this.Manager.Params("aid", albumId);
-            if (photoIds != null)
-            {
-                this.Manager.Params("pids", string.Join(",", CommonUtils.IntArrayToString(photoIds)));
-            }
-            if (count != null)
-            {
-                this.Manager.Params("limit", count);
-            }
-            if (offset != null)
-            {
-                this.Manager.Params("offset", offset);
-            }
-
+            this.Manager.Method("photos.get", new object[] { "uid", userId, 
+                                                            "aid", albumId, 
+                                                            "pids", string.Join(",", CommonUtils.IntArrayToString(photoIds)),
+                                                            "limit", count,
+                                                            "offset", offset});
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                return this.buildPhotosListFull(result);
-            }
-            return null;
+
+            return this.buildPhotosListFull(result);
         }
 
         public List<PhotoEntryShort> GetAll(int? userId, int? count, int? offset)
         {
-            this.Manager.Method("photos.getAll");
-            if (userId != null)
-            {
-                this.Manager.Params("owner_id", userId);
-            }
-            if (count != null)
-            {
-                this.Manager.Params("limit", count);
-            }
-            if (offset != null)
-            {
-                this.Manager.Params("offset", offset);
-            }
-
+            this.Manager.Method("photos.getAll", new object[] { "owner_id", userId, "limit", count, "offset", offset });
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                return this.buildPhotosListShort(result);
-            }
-            return null;
+
+            return this.buildPhotosListShort(result);
         }
 
         public List<PhotoEntryShort> GetUserPhotos(int? userId, int? count, int? offset)
         {
-            this.Manager.Method("photos.getUserPhotos");
-            if (userId != null)
-            {
-                this.Manager.Params("uid", userId);
-            }
-            if (count != null)
-            {
-                this.Manager.Params("limit", count);
-            }
-            if (offset != null)
-            {
-                this.Manager.Params("offset", offset);
-            }
-
+            this.Manager.Method("photos.getUserPhotos", new object[] { "uid", userId, "limit", count, "offset", offset });
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                return this.buildPhotosListShort(result);
-            }
-            return null;
+
+            return this.buildPhotosListShort(result);
         }
 
         public List<PhotoEntryTag> GetTags(int photoId, int? ownerId)
         {
-            this.Manager.Method("photos.getTags");
-            this.Manager.Params("pid", photoId);
-            if (ownerId != null)
-            {
-                this.Manager.Params("owner_id", ownerId);
-            }
-
+            this.Manager.Method("photos.getTags", new object[] { "pid", photoId, "owner_id", ownerId });
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                return this.buildPhotoTagsList(result);
-            }
-            return null;
+
+            return this.buildPhotoTagsList(result);
         }
 
         public int PutTag(int? ownerId, int photoId, int userId, float x, float y, float x2, float y2)
         {
-            this.Manager.Method("photos.putTag");
-            this.Manager.Params("pid", photoId);
-            this.Manager.Params("uid", userId);
-            this.Manager.Params("x", x);
-            this.Manager.Params("y", y);
-            this.Manager.Params("x2", x2);
-            this.Manager.Params("y2", y2);
-            if (ownerId != null)
-            {
-                this.Manager.Params("owner_id", ownerId);
-            }
-
+            this.Manager.Method("photos.putTag", new object[] { "pid", photoId, "uid", userId, "x", x, "y", y, "x2", x2, "y2", y2, "owner_id", ownerId });
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.IntVal();
-            }
-            return -1;
+            XmlUtils.UseNode(result);
+
+            return XmlUtils.IntVal();
         }
 
         public bool RemoveTag(int? ownerId, int photoId, int tagId)
         {
-            this.Manager.Method("photos.removeTag");
-            this.Manager.Params("pid", photoId);
-            this.Manager.Params("tag_id", tagId);
-            if (ownerId != null)
-            {
-                this.Manager.Params("owner_id", ownerId);
-            }
-
+            this.Manager.Method("photos.removeTag", new object[] { "pid", photoId, "tag_id", tagId, "owner_id", ownerId });
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-            return false;
+            XmlUtils.UseNode(result);
+
+            return XmlUtils.BoolVal();
         }
 
         public List<PhotoEntryFull> GetPhotosById(string[] photos)
         {
-            this.Manager.Method("photos.getById");
-            if (photos != null)
-            {
-                this.Manager.Params("photos", string.Join(",", photos));
-            }
+            this.Manager.Method("photos.getById", new object[] { "photos", string.Join(",", photos) });
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                return this.buildPhotosListFull(result);
-            }
-            return null;
+
+            return this.buildPhotosListFull(result);
         }
 
         public AlbumEntry CreateAlbum(string title, AlbumAccessPrivacy access, AlbumCommentPrivacy comment, string description)
         {
-            this.Manager.Method("photos.createAlbum");
-            this.Manager.Params("title", title);
-            this.Manager.Params("privacy", access);
-            this.Manager.Params("comment_privacy", comment);
-            if (description != null)
-            {
-                this.Manager.Params("description", description);
-            }
+            this.Manager.Method("photos.createAlbum", new object[] { "title", title, "privacy", access, "comment_privacy", comment, "description", description });
 
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                return this.buildAlbumEntry(result.SelectSingleNode("album"));
-            }
-            return null;
+            return this.buildAlbumEntry(this.Manager.Execute().GetResponseXml().SelectSingleNode("album"));
         }
 
         public bool EditAlbum(int albumId, string title, AlbumAccessPrivacy access, AlbumCommentPrivacy comment, string description)
         {
-            this.Manager.Method("photos.editAlbum");
-            this.Manager.Params("aid", albumId);
-            this.Manager.Params("title", title);
-            this.Manager.Params("privacy", access);
-            this.Manager.Params("comment_privacy", comment);
-            if (description != null)
-            {
-                this.Manager.Params("description", description);
-            }
+            this.Manager.Method("photos.editAlbum", new object[] { "aid", albumId, "title", title, "privacy", access, "comment_privacy", comment, "description", description });
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
 
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-            return false;
+            return XmlUtils.BoolVal();
         }
 
         public PhotoUploadInfo GetUploadServer(int albumId, int? groupId, bool saveBig)
         {
-            this.Manager.Method("photos.getUploadServer");
-            this.Manager.Params("save_big", saveBig);
-            if (groupId != null)
-            {
-                this.Manager.Params("gid", groupId);
-            }
+            this.Manager.Method("photos.getUploadServer", new object[] { "save_big", saveBig, "gid", groupId });
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+            PhotoUploadInfo i = new PhotoUploadInfo();
+            i.Url = XmlUtils.String("upload_url");
+            i.AlbumId = XmlUtils.Int("aid");
 
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                PhotoUploadInfo i = new PhotoUploadInfo();
-                i.Url = XmlUtils.String("upload_url");
-                i.AlbumId = XmlUtils.Int("aid");
-                return i;
-            }
-            return null;
+            return i;
         }
 
         public string GetWallUploadServer(int? userId, int? groupId)
         {
             this.Manager.Method("photos.getWallUploadServer", new object[] { "uid", userId, "gid", groupId });
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.String("upload_url");
-            }
-            return null;
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+
+            return XmlUtils.String("upload_url");
         }
 
         public PhotoEntryFull SaveWallPhoto(PhotoUploadedInfo photoInfo, int? userId, int? groupId)
@@ -408,101 +272,48 @@ namespace ApiCore.Photos
                                                                         "photo", photoInfo.Photo,
                                                                         "hash", photoInfo.Hash,
                                                                         "uid", userId, "gid", groupId});
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                return this.buildPhotoEntryFull(result);
-            }
-            return null;
+
+            return this.buildPhotoEntryFull(this.Manager.Execute().GetResponseXml());
         }
 
         public bool EditPhoto(int userId, int photoid, string text)
         {
-            this.Manager.Method("photos.edit");
-            this.Manager.Params("uid", userId);
-            this.Manager.Params("pid", photoid);
-            this.Manager.Params("caption", text);
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-            return false;
+            this.Manager.Method("photos.edit", new object[] { "uid", userId, "pid", photoid, "caption", text });
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+
+            return XmlUtils.BoolVal();
         }
 
         public bool MovePhoto(int photoId, int toAlbumId, int? ownerId)
         {
-            this.Manager.Method("photos.move");
-            this.Manager.Params("pid", photoId);
-            this.Manager.Params("target_aid", toAlbumId);
-            if (ownerId != null)
-            {
-                this.Manager.Params("oid", ownerId);
-            }
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-            return false;
+            this.Manager.Method("photos.move", new object[] { "pid", photoId, "target_aid", toAlbumId, "oid", ownerId });
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+
+            return XmlUtils.BoolVal();
         }
 
         public bool UsePhotoAsCover(int photoId, int albumId, int? ownerId)
         {
-            this.Manager.Method("photos.makeCover");
-            this.Manager.Params("pid", photoId);
-            this.Manager.Params("aid", albumId);
-            if (ownerId != null)
-            {
-                this.Manager.Params("oid", ownerId);
-            }
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-            return false;
+            this.Manager.Method("photos.makeCover", new object[] { "pid", photoId, "aid", albumId, "oid", ownerId });
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml();
+
+            return XmlUtils.BoolVal();
         }
 
         public bool ReorderAlbums(int albumId, int before, int after, int? ownerId)
         {
-            this.Manager.Method("photos.reorderAlbums");
-            this.Manager.Params("aid", albumId);
-            this.Manager.Params("before", before);
-            this.Manager.Params("after", after);
-            if (ownerId != null)
-            {
-                this.Manager.Params("oid", ownerId);
-            }
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-            return false;
+            this.Manager.Method("photos.reorderAlbums", new object[] { "aid", albumId, "before", before, "after", after, "oid", ownerId });
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+
+            return XmlUtils.BoolVal();
         }
 
         public bool ReorderPhotos(int photoId, int before, int after, int? ownerId)
         {
-            this.Manager.Method("photos.reorderAlbums");
-            this.Manager.Params("pid", photoId);
-            this.Manager.Params("before", before);
-            this.Manager.Params("after", after);
-            if (ownerId != null)
-            {
-                this.Manager.Params("oid", ownerId);
-            }
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-            return false;
+            this.Manager.Method("photos.reorderAlbums", new object[] { "pid", photoId, "before", before, "after", after, "oid", ownerId });
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+
+            return XmlUtils.BoolVal();
         }
 
     }

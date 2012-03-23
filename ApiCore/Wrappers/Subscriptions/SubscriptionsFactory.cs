@@ -31,86 +31,46 @@ namespace ApiCore.Subscriptions
 
         public SubscriptionsInfo Get(int? userId, int? offset, int? count)
         {
-            this.Manager.Method("subscriptions.get");
-            if (userId != null)
-            {
-                this.Manager.Params("uid", userId);
-            }
-            if (userId != null)
-            {
-                this.Manager.Params("offset", offset);
-            }
-            if (userId != null)
-            {
-                this.Manager.Params("count", count);
-            }
+            this.Manager.Method("subscriptions.get", new object[] { "uid", userId, "offset", offset, "count", count });
 
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                SubscriptionsInfo si = new SubscriptionsInfo();
-                si.Count = XmlUtils.Int("count");
-                si.Users = this.buildUsersList(result.SelectNodes("users/uid"));
-                return si;
-            }
+            XmlUtils.UseNode(result);
+            SubscriptionsInfo si = new SubscriptionsInfo();
+            si.Count = XmlUtils.Int("count");
+            si.Users = this.buildUsersList(result.SelectNodes("users/uid"));
 
-            return null;
+            return si;
         }
 
         public SubscriptionsInfo GetFollowers(int? userId, int? offset, int? count)
         {
-            this.Manager.Method("subscriptions.getFollowers");
-            if (userId != null)
-            {
-                this.Manager.Params("uid", userId);
-            }
-            if (userId != null)
-            {
-                this.Manager.Params("offset", offset);
-            }
-            if (userId != null)
-            {
-                this.Manager.Params("count", count);
-            }
+            this.Manager.Method("subscriptions.getFollowers", new object[] { "uid", userId, "offset", offset, "count", count });
 
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                SubscriptionsInfo si = new SubscriptionsInfo();
-                si.Count = XmlUtils.Int("count");
-                si.Users = this.buildUsersList(result.SelectNodes("users/uid"));
-                return si;
-            }
+            XmlUtils.UseNode(result);
+            SubscriptionsInfo si = new SubscriptionsInfo();
+            si.Count = XmlUtils.Int("count");
+            si.Users = this.buildUsersList(result.SelectNodes("users/uid"));
 
-            return null;
+            return si;
         }
 
         public bool Follow(int userId)
         {
             this.Manager.Method("subscriptions.follow");
             this.Manager.Params("uid", userId);
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-            return false;
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+
+            return XmlUtils.BoolVal();
         }
 
         public bool Unfollow(int userId)
         {
             this.Manager.Method("subscriptions.follow");
             this.Manager.Params("uid", userId);
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-            return false;
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+
+            return XmlUtils.BoolVal();
         }
     }
 }

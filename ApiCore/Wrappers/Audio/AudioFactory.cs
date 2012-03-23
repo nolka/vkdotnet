@@ -92,13 +92,11 @@ namespace ApiCore.Audio
             }
 
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                this.searchSongsCount = XmlUtils.Int("count");
-                return this.buildList(result);
-            }
-            return null;
+
+            XmlUtils.UseNode(result);
+            this.searchSongsCount = XmlUtils.Int("count");
+            return this.buildList(result);
+
         }
 
         public string GetUploadServer()
@@ -106,12 +104,10 @@ namespace ApiCore.Audio
             this.Manager.Method("audio.getUploadServer");
 
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
+
                 XmlUtils.UseNode(result);
                 return XmlUtils.String("upload_url");
-            }
-            return null;
+
         }
 
         public AudioEntry Save(AudioUploadedInfo info)
@@ -136,12 +132,10 @@ namespace ApiCore.Audio
                 this.Manager.Params("oid", ownerId);
             }
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-            return false;
+
+            XmlUtils.UseNode(result);
+            return XmlUtils.BoolVal();
+
         }
     }
 }

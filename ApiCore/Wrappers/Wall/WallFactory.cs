@@ -167,20 +167,15 @@ namespace ApiCore.Wall
         public List<WallEntry> Get(int? ownerId, int? count, int? offset, string filter)
         {
             this.Manager.Method("wall.get", new object[] { "owner_id", ownerId, "offset", offset, "count", count, "filter", filter });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            if (x.InnerText.Equals(""))
             {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
-                {
-                    return null;
-                }
-
-                this.PostsCount = Convert.ToInt32(x.SelectSingleNode("/response/count").InnerText);
-
-                return this.buildEntryList(x);
+                this.Manager.DebugMessage(string.Format("No wall entries found with specified args"));
+                return null;
             }
-            return null;
+            this.PostsCount = Convert.ToInt32(x.SelectSingleNode("/response/count").InnerText);
+
+            return this.buildEntryList(x);
         }
 
         /// <summary>
@@ -192,13 +187,9 @@ namespace ApiCore.Wall
         public int Post(int? ownerId, string message)
         {
             this.Manager.Method("wall.post", new object[] { "owner_id", ownerId, "message", message });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return Convert.ToInt32(x.SelectSingleNode("/response").InnerText);
-            }
-            return -1;
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+
+            return Convert.ToInt32(x.InnerText);
         }
 
         /// <summary>
@@ -221,13 +212,9 @@ namespace ApiCore.Wall
                                     "message", message, 
                                     "attachment", attachments, 
                                     "services", ((services != null)?String.Join(",", services):null) });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return Convert.ToInt32(x.SelectSingleNode("/response").InnerText);
-            }
-            return -1;
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+
+            return Convert.ToInt32(x.InnerText);
         }
 
         public int Post(int? ownerId, string message, MessageAttachment[] attachments)
@@ -244,13 +231,9 @@ namespace ApiCore.Wall
         public bool Delete(int? ownerId, int msg_id)
         {
             this.Manager.Method("wall.delete", new object[] { "owner_id", ownerId, "mid", msg_id });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText.Equals("1")) ? true : false);
-            }
-            return false;
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+
+            return ((x.SelectSingleNode("/response").InnerText.Equals("1")) ? true : false);
         }
 
         /// <summary>
@@ -262,13 +245,8 @@ namespace ApiCore.Wall
         public bool Restore(int? ownerId, int msg_id)
         {
             this.Manager.Method("wall.restore", new object[] { "owner_id", ownerId, "mid", msg_id });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText.Equals("1")) ? true : false);
-            }
-            return false;
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return ((x.InnerText.Equals("1")) ? true : false);
         }
 
         /// <summary>
@@ -280,14 +258,9 @@ namespace ApiCore.Wall
         public int AddLike(int postId, bool needPublish)
         {
             this.Manager.Method("wall.addLike", new object[] { "post_id", postId, "need_publish", needPublish });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                XmlUtils.UseNode(x.SelectSingleNode("/response"));
-                return XmlUtils.Int("likes");
-            }
-            return -1;
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml().SelectSingleNode("/response"));
+
+            return XmlUtils.Int("likes");
         }
 
         /// <summary>
@@ -298,14 +271,9 @@ namespace ApiCore.Wall
         public int DeleteLike(int postId)
         {
             this.Manager.Method("wall.deleteLike", new object[] { "post_id", postId });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                XmlUtils.UseNode(x.SelectSingleNode("/response"));
-                return XmlUtils.Int("likes");
-            }
-            return -1;
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml().SelectSingleNode("/response"));
+
+            return XmlUtils.Int("likes");
         }
 
         /// <summary>
@@ -320,23 +288,19 @@ namespace ApiCore.Wall
         public List<EntryComment> GetComments(int? ownerId, int postId, SortOrder sortOrder, int? offset, int? count)
         {
             this.Manager.Method("wall.getComments", new object[] { "owner_id", ownerId, "post_id", postId, "sort", ((sortOrder == SortOrder.Asc) ? "asc" : "desc"), "offset", offset, "count", count });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
+            XmlNodeList nodes = this.Manager.Execute().GetResponseXml().SelectNodes("/response/comment");
+            if (nodes.Count > 0)
             {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                XmlNodeList nodes = x.SelectNodes("/response/comment");
-                if (nodes.Count > 0)
+                List<EntryComment> comments = new List<EntryComment>();
+                foreach (XmlNode node in nodes)
                 {
-                    List<EntryComment> comments = new List<EntryComment>();
-                    foreach (XmlNode node in nodes)
-                    {
-                        EntryComment c = CommentsFactory.GetEntryComment(node);
-                        comments.Add(c);
-                    }
-                    return comments;
+                    EntryComment c = CommentsFactory.GetEntryComment(node);
+                    comments.Add(c);
                 }
-                return null;
+
+                return comments;
             }
+
             return null;
         }
 
@@ -351,14 +315,9 @@ namespace ApiCore.Wall
         public int AddComment(int? ownerId, int postId, string msg, int? replyToCid)
         {
             this.Manager.Method("wall.addComment", new object[] { "owner_id", ownerId, "post_id", postId, "text", msg, "reply_to_cid", replyToCid });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                XmlUtils.UseNode(x.SelectSingleNode("/response"));
-                return XmlUtils.Int("cid");
-            }
-            return -1;
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml().SelectSingleNode("/response"));
+
+            return XmlUtils.Int("cid");
         }
 
         /// <summary>
@@ -370,14 +329,9 @@ namespace ApiCore.Wall
         public bool DeleteComment(int? ownerId, int commentId)
         {
             this.Manager.Method("wall.deleteComment", new object[] { "owner_id", ownerId, "cid", commentId });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                XmlUtils.UseNode(x);
-                return XmlUtils.Bool("response");
-            }
-            return false;
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+
+            return XmlUtils.Bool("response");
         }
 
         /// <summary>
@@ -389,14 +343,9 @@ namespace ApiCore.Wall
         public bool RestoreComment(int? ownerId, int commentId)
         {
             this.Manager.Method("wall.restoreComment", new object[] { "owner_id", ownerId, "cid", commentId });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                XmlUtils.UseNode(x);
-                return XmlUtils.Bool("response");
-            }
-            return false;
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+
+            return XmlUtils.Bool("response");
         }
 
 

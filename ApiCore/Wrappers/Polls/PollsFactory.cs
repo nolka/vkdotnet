@@ -41,70 +41,35 @@ namespace ApiCore.Polls
         /// <returns>Poll information if all ok, null if not ok</returns>
         public PollEntry GetById(int? ownerId, int pollId)
         {
-            this.Manager.Method("polls.getById");
-            this.Manager.Params("poll_id", pollId);
-            if (ownerId != null)
-            {
-                this.Manager.Params("owner_id", ownerId);
-            }
-
+            this.Manager.Method("polls.getById", new object[] { "poll_id", pollId, "owner_id", ownerId });
             XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                PollEntry p = new PollEntry();
-                p.Id = XmlUtils.Int("poll_id");
-                p.OwnerId = XmlUtils.Int("owner_id");
-                p.DateCreated = CommonUtils.FromUnixTime(XmlUtils.Int("created"));
-                p.Question = XmlUtils.String("question");
-                p.Votes = XmlUtils.Int("votes");
-                p.AnswerId = XmlUtils.Int("answer_id");
-                p.Answers = this.buildAnswers(result.SelectNodes("answers/answer"));
+            XmlUtils.UseNode(result);
+            PollEntry p = new PollEntry();
+            p.Id = XmlUtils.Int("poll_id");
+            p.OwnerId = XmlUtils.Int("owner_id");
+            p.DateCreated = CommonUtils.FromUnixTime(XmlUtils.Int("created"));
+            p.Question = XmlUtils.String("question");
+            p.Votes = XmlUtils.Int("votes");
+            p.AnswerId = XmlUtils.Int("answer_id");
+            p.Answers = this.buildAnswers(result.SelectNodes("answers/answer"));
 
-                return p;
-            }
-
-            return null;
+            return p;
         }
 
         public bool AddVote(int? ownerId, int pollId, int answeId)
         {
-            this.Manager.Method("polls.addVote");
-            this.Manager.Params("poll_id", pollId);
-            this.Manager.Params("answer_id", answeId);
-            if (ownerId != null)
-            {
-                this.Manager.Params("owner_id", ownerId);
-            }
+            this.Manager.Method("polls.addVote", new object[] { "poll_id", pollId, "answer_id", answeId, "owner_id", ownerId });
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
 
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-
-            return false;
+            return XmlUtils.BoolVal();
         }
 
         public bool DeleteVote(int? ownerId, int pollId, int answeId)
         {
-            this.Manager.Method("polls.deleteVote");
-            this.Manager.Params("poll_id", pollId);
-            this.Manager.Params("answer_id", answeId);
-            if (ownerId != null)
-            {
-                this.Manager.Params("owner_id", ownerId);
-            }
+            this.Manager.Method("polls.deleteVote", new object[] { "poll_id", pollId, "answer_id", answeId, "owner_id", ownerId });
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
 
-            XmlNode result = this.Manager.Execute().GetResponseXml();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlUtils.UseNode(result);
-                return XmlUtils.BoolVal();
-            }
-
-            return false;
+            return XmlUtils.BoolVal();
         }
 
     }

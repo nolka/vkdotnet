@@ -5,6 +5,7 @@ using System.Xml;
 
 namespace ApiCore.Status
 {
+    [Obsolete("Status is market as deprecated in official VK api documentation")]
     public class StatusFactory: BaseFactory
     {
         public StatusFactory(ApiManager manager)
@@ -15,22 +16,18 @@ namespace ApiCore.Status
 
         public string Get(int? userId)
         {
-            this.Manager.Method("status.get");
-            if (userId != null)
-            {
-                this.Manager.Params("uid", userId);
-            }
-            XmlNode resp = this.Manager.Execute().GetResponseXml();
-            XmlUtils.UseNode(resp);
+            this.Manager.Method("status.get", new object[] { "uid", userId });
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+
             return XmlUtils.String("text");
         }
 
         public bool Set(string status)
         {
-            this.Manager.Method("status.set");
+            this.Manager.Method("status.set", new object[] { "text", status });
             this.Manager.Params("text", status);
-            XmlNode resp = this.Manager.Execute().GetResponseXml();
-            XmlUtils.UseNode(resp);
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
+
             return XmlUtils.BoolVal();
         }
     }

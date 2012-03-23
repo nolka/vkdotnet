@@ -22,13 +22,9 @@ namespace ApiCore.Storage
                                             "global", isGlobal,
                                             "uid", uid
             });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                return ((x.SelectSingleNode("/response").InnerText.Equals("1")) ? true : false);
-            }
-            return false;
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            return ((x.InnerText.Equals("1")) ? true : false);
         }
 
         private StorageEntry buildEntry(XmlNode item, bool isGlobal)
@@ -53,12 +49,8 @@ namespace ApiCore.Storage
                                             "global", isGlobal,
                                             "uid", userId
             });
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                return this.Manager.GetXmlDocument(resp);
-            }
-            return null;
+
+                return this.Manager.Execute().GetResponseXml();
         }
 
         public List<StorageEntry> GetList(string[] keys, bool isGlobal, int? userId)
@@ -103,11 +95,5 @@ namespace ApiCore.Storage
             XmlDocument x = this.get(key, null, isGlobal, userId);
             return x.SelectSingleNode("/response").InnerText;
         }
-
-
-
-
-
-
     }
 }

@@ -75,7 +75,7 @@ namespace ApiCore
         /// </summary>
         public bool DebugMode = false;
 
-        private void debugMsg(string msg)
+        public void DebugMessage(string msg)
         {
             if (this.DebugMode)
             {
@@ -274,7 +274,7 @@ namespace ApiCore
             {
                 this.builder.Add("format", "json");
             }
-            this.debugMsg("Method: " + methodName);
+            this.DebugMessage("Method: " + methodName);
             return this;
         }
 
@@ -330,7 +330,7 @@ namespace ApiCore
         public ApiManager Params(string key, object value)
         {
             this.builder.Add(key, value.ToString());
-            this.debugMsg("Params: " + key + " => " + value);
+            this.DebugMessage("Params: " + key + " => " + value);
             return this;
         }
 
@@ -372,12 +372,12 @@ namespace ApiCore
                     {
                         this.AppendCache(req, this.apiResponseString);
                     }
-                    this.debugMsg(this.apiResponseString);
+                    this.DebugMessage(this.apiResponseString);
                 }
                 else
                 {
                     this.apiResponseString = cacheString;
-                    this.debugMsg("FROM CACHE: "+this.apiResponseString);
+                    this.DebugMessage("FROM CACHE: "+this.apiResponseString);
                 }
                 
                 if (!this.apiResponseString.Equals("") || this.apiResponseString.Length > 0)
@@ -436,11 +436,22 @@ namespace ApiCore
             this.isCancelled = true;
         }
 
-        public XmlNode GetResponseXml()
+        public XmlDocument GetResponseXml()
         {
             if (this.apiResponseXml != null)
             {
-                return this.apiResponseXml.SelectSingleNode("/response");
+                XmlDocument xdoc = new XmlDocument();
+                XmlNode response = this.apiResponseXml.SelectSingleNode("/response");
+                if (response != null)
+                {
+                    XmlNode temporary = xdoc.ImportNode(response, true);
+                    xdoc.AppendChild(temporary);
+                    return xdoc;
+                }
+                else
+                {
+                    throw new Exception("Response string is empty!");
+                }
             }
             return null;
         }
@@ -465,6 +476,13 @@ namespace ApiCore
         {
             XmlDocument x = new XmlDocument();
             x.LoadXml(str);
+            return x;
+        }
+
+        public XmlDocument GetXmlDocument()
+        {
+            XmlDocument x = new XmlDocument();
+            x.LoadXml(this.GetResponseString());
             return x;
         }
 

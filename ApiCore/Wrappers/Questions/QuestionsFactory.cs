@@ -5,6 +5,7 @@ using System.Xml;
 
 namespace ApiCore.Questions
 {
+    [Obsolete("Questions service currently is not in use at date 2012.03.23")]
     public class QuestionsFactory: BaseFactory
     {
 
@@ -114,7 +115,7 @@ namespace ApiCore.Questions
 
         public List<QuestionEntry> Get(object qid, QuestionSortMode? sort, int? needProfiles, string nameCase, int? count, int? offset)
         {
-            this.Manager.Method("questions.get");
+            this.Manager.Method("questions.get", new object[] { "sort", sort, "need_profiles", needProfiles, "name_case", nameCase, "count", count, "offset", offset });
             if (qid != null)
             {
                 if (qid is int)
@@ -126,107 +127,47 @@ namespace ApiCore.Questions
                     this.Manager.Params("uids", qid);
                 }
             }
-            if (sort != null)
+            XmlDocument x = this.Manager.Execute().GetResponseXml()
+            if (x.InnerText.Equals(""))
             {
-                this.Manager.Params("sort", sort);
+                return null;
             }
-            if (needProfiles != null)
-            {
-                this.Manager.Params("need_profiles", needProfiles);
-            }
-            if (nameCase != null)
-            {
-                this.Manager.Params("name_case", nameCase);
-            }
-            if (count != null)
-            {
-                this.Manager.Params("count", count);
-            }
-            if (offset != null)
-            {
-                this.Manager.Params("offset", offset);
-            }
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
-                {
-                    return null;
-                }
-                return this.buildQuestionEntryList(x);
-            }
-            return null;
+
+            return this.buildQuestionEntryList(x);
         }
 
         public List<QuestionEntry> GetOutbound( QuestionSortMode? sort, int? needProfiles, string nameCase, int? count, int? offset)
         {
-            this.Manager.Method("questions.getOutbound");
-            if (sort != null)
+            this.Manager.Method("questions.getOutbound", new object[] { "sort", sort, "need_profiles", needProfiles, "name_case", nameCase, "count", count, "offset", offset});
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            if (x.InnerText.Equals(""))
             {
-                this.Manager.Params("sort", sort);
+                return null;
             }
-            if (needProfiles != null)
-            {
-                this.Manager.Params("need_profiles", needProfiles);
-            }
-            if (nameCase != null)
-            {
-                this.Manager.Params("name_case", nameCase);
-            }
-            if (count != null)
-            {
-                this.Manager.Params("count", count);
-            }
-            if (offset != null)
-            {
-                this.Manager.Params("offset", offset);
-            }
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
-                {
-                    return null;
-                }
-                return this.buildQuestionEntryList(x);
-            }
-            return null;
+            return this.buildQuestionEntryList(x);
         }
 
         public List<QuestionAnswer> GetAnswers(int qid, QuestionSortMode? sort, int? needProfiles, int? count, int? offset)
         {
-            this.Manager.Method("questions.getAnswers");
-            this.Manager.Params("qid", qid);
-            if (sort != null)
+            this.Manager.Method("questions.getAnswers", new object[] { "qid", qid, "sort", sort, "need_profiles", needProfiles, "count", count, "offset", offset });
+
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
+            if (x.InnerText.Equals(""))
             {
-                this.Manager.Params("sort", sort);
+                return null;
             }
-            if (needProfiles != null)
-            {
-                this.Manager.Params("need_profiles", needProfiles);
-            }
-            if (count != null)
-            {
-                this.Manager.Params("count", count);
-            }
-            if (offset != null)
-            {
-                this.Manager.Params("offset", offset);
-            }
-            string resp = this.Manager.Execute().GetResponseString();
-            if (this.Manager.MethodSuccessed)
-            {
-                XmlDocument x = this.Manager.GetXmlDocument(resp);
-                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
-                {
-                    return null;
-                }
-                return this.buildQuestionAnswersList(x);
-            }
-            return null;
+
+            return this.buildQuestionAnswersList(x);
         }
+
+        //
+        //  #####   #   #    ###    #   #
+        //  #       #   #   #   #   #  #    this obsolete shit 
+        //  ###     #   #   #       ##          refactoring!
+        //  #       #   #   #   #   #  #
+        //  #        ###     ###    #   #
+        //
 
         public bool Edit(int q_id, string text, int type)
         {
