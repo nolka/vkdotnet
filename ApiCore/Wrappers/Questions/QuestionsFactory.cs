@@ -127,7 +127,7 @@ namespace ApiCore.Questions
                     this.Manager.Params("uids", qid);
                 }
             }
-            XmlDocument x = this.Manager.Execute().GetResponseXml()
+            XmlDocument x = this.Manager.Execute().GetResponseXml();
             if (x.InnerText.Equals(""))
             {
                 return null;

@@ -295,7 +295,7 @@ namespace ApiCore.Photos
         public bool UsePhotoAsCover(int photoId, int albumId, int? ownerId)
         {
             this.Manager.Method("photos.makeCover", new object[] { "pid", photoId, "aid", albumId, "oid", ownerId });
-            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml();
+            XmlUtils.UseNode(this.Manager.Execute().GetResponseXml());
 
             return XmlUtils.BoolVal();
         }
