@@ -78,7 +78,7 @@ namespace ApiCore.Messages
             }
             set
             {
-                this.WaitTime = value;
+                this.waitTime = value;
             }
         }
         private int waitTime = 25;
