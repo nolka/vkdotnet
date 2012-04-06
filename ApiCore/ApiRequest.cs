@@ -7,30 +7,30 @@ using System.IO;
 
 namespace ApiCore
 {
-    public static class ApiRequest
+    public class ApiRequest
     {
-        private static HttpWebRequest request;
-        private static HttpWebResponse response;
+        private  HttpWebRequest request;
+        private  HttpWebResponse response;
 
-        public static int Timeout = 15000;
+        public int Timeout = 15000;
 
         /// <summary>
         /// Send request to API
         /// </summary>
         /// <param name="url">Url to request</param>
         /// <returns>String, contains response from api. by default, it's - XML</returns>
-        public static string Send(string url)
+        public string Send(string url)
         {
-            try
-            {
-                ApiRequest.request = (HttpWebRequest)HttpWebRequest.Create(url);
-                ApiRequest.request.UserAgent = "xternalx vkontakte api wrapper/0.1a";
-                ApiRequest.request.Timeout = ApiRequest.Timeout;
-                ApiRequest.request.Method = "GET";
+            //try
+            //{
+                this.request = (HttpWebRequest)HttpWebRequest.Create(url);
+                this.request.UserAgent = "xternalx vkontakte api wrapper/0.1a";
+                this.request.Timeout = this.Timeout;
+                this.request.Method = "GET";
 
-                ApiRequest.response = (HttpWebResponse)ApiRequest.request.GetResponse();
+                this.response = (HttpWebResponse)this.request.GetResponse();
 
-                Stream responseStream = ApiRequest.response.GetResponseStream();
+                Stream responseStream = this.response.GetResponseStream();
 
                 if (responseStream == null)
                 {
@@ -39,14 +39,19 @@ namespace ApiCore
                 else
                 {
                     StreamReader sr = new StreamReader(responseStream);
-                    
+
                     return sr.ReadToEnd();
                 }
-            }
-            catch(Exception e)
-            {
-                throw new ApiRequestNullResult("Unknown result: "+e.Message);
-            }
+            //}
+            //catch (WebException e)
+            //{
+            //    Console.WriteLine("ololo: "+e.Message);
+            //    return null;
+            //}
+            //catch (Exception e)
+            //{
+            //    throw new ApiRequestNullResult("Unknown result: " + e.Message);
+            //}
         }
 
         

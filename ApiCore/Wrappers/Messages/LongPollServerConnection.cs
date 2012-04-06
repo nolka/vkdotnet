@@ -43,6 +43,8 @@ namespace ApiCore.Messages
 
         private SynchronizationContext sync;
 
+        private ApiRequest request;
+
         /// <summary>
         /// When data recieved
         /// </summary>
@@ -171,16 +173,19 @@ namespace ApiCore.Messages
 
         private void run(object state)
         {
-            //try
+            try
             {
                 SynchronizationContext context = state as SynchronizationContext;
                 context.Send(this.doGetLongPollServerConnectionData, null);
                 context.Send(this.doGetSendRequest, null);
+                if (this.request == null)
+                {
+                    this.request = new ApiRequest();
+                    this.request.Timeout = this.WaitTime;
+                } 
                 while (!this.stopPending)
                 {
-
-                    
-                    this.lastLongPollMessage = ApiRequest.Send("http://" + this.Server + "?act=a_check&key=" + this.Key + "&ts=" + this.LastEventId.ToString() + "&wait=" + this.WaitTime.ToString());
+                    this.lastLongPollMessage = this.request.Send("http://" + this.Server + "?act=a_check&key=" + this.Key + "&ts=" + this.LastEventId.ToString() + "&wait=" + this.WaitTime.ToString() + "&mode=0");
                     if (this.lastLongPollMessage == "")
                     {
                         continue;
@@ -211,8 +216,20 @@ namespace ApiCore.Messages
                     }
                 }
             }
-            //catch
-            //{ }
+            catch(System.Net.WebException e)
+            {
+                switch (e.Status)
+                {
+                    case System.Net.WebExceptionStatus.Timeout:
+                        {
+                            if (!this.stopPending)
+                            {
+                                this.run(state);
+                            }
+                            break;
+                        }
+                }
+            }
             //finally
             {
             }
@@ -235,7 +252,7 @@ namespace ApiCore.Messages
 
         private void doGetSendRequest(object data)
         {
-            ApiRequest.Timeout = this.WaitTime * 1000;
+            this.request.Timeout = this.WaitTime * 1000;
         }
 
         /// <summary>

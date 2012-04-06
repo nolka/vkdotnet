@@ -267,7 +267,7 @@ namespace ApiCore
             this.MethodSuccessed = false;
             this.isCancelled = false;
             this.LastMethod = methodName;
-            ApiRequest.Timeout = this.Timeout;
+            
             this.builder = new ApiQueryBuilder(this.appId, this.session);
             this.builder.Add("method", methodName);
             if (this.ResponseAs == ResponseType.Json)
@@ -366,8 +366,9 @@ namespace ApiCore
                 if (this.cacheString == null)
                 {
                     this.Log("Request string: " + req);
-                    ApiRequest.Timeout = this.Timeout;
-                    this.apiResponseString = ApiRequest.Send(req);
+                    ApiRequest request = new ApiRequest();
+                    request.Timeout = this.Timeout;
+                    this.apiResponseString = request.Send(req);
                     if (this.isCacheEnabled)
                     {
                         this.AppendCache(req, this.apiResponseString);
