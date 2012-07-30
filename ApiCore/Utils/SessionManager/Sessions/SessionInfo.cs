@@ -8,6 +8,7 @@ namespace ApiCore
     {
         public int AppId;
         public int Expire;
+		public int UserId;
         public AuthType AuthType;
     }
 }
