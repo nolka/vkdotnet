@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3CE00172-768B-4A36-9FB5-2E574BAA9DB9}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AudioDownloader</RootNamespace>
+    <AssemblyName>AudioDownloader</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\AudioDownloader%28OAuth%29\MainWnd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\AudioDownloader%28OAuth%29\MainWnd.Designer.cs">
+      <DependentUpon>..\AudioDownloader%28OAuth%29\MainWnd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\AudioDownloader%28OAuth%29\Program.cs" />
+    <Compile Include="..\AudioDownloader%28OAuth%29\Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="..\AudioDownloader%28OAuth%29\MainWnd.resx">
+      <DependentUpon>..\AudioDownloader%28OAuth%29\MainWnd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\AudioDownloader%28OAuth%29\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Include="..\AudioDownloader%28OAuth%29\Properties\Resources.Designer.cs">
+      <DependentUpon>..\..\AudioDownloader%28OAuth%29\Properties\Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="..\AudioDownloader%28OAuth%29\app.config" />
+    <None Include="..\AudioDownloader%28OAuth%29\Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="..\AudioDownloader%28OAuth%29\Properties\Settings.Designer.cs">
+      <DependentUpon>..\..\AudioDownloader%28OAuth%29\Properties\Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HttpDownloader\HttpDownloader\HttpDownloader.csproj">
+      <Project>{DB451818-C2DC-4408-B1B9-D1AC0C939E51}</Project>
+      <Name>HttpDownloader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ApiCore\ApiCore.csproj">
+      <Project>{6885B1CF-B02D-4AB0-9F5C-A3EE4974655C}</Project>
+      <Name>ApiCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="..\AudioDownloader%28OAuth%29\Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="..\AudioDownloader%28OAuth%29\Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="..\AudioDownloader%28OAuth%29\Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
