@@ -69,6 +69,26 @@ namespace ApiCore.Friends
             return null;
         }
 
+        private List<Friend> buildOnlineFriendsEntryList(XmlDocument x)
+        {
+            XmlNodeList msgsNodes = x.SelectNodes("/response/uid");
+            if (msgsNodes.Count > 0)
+            {
+                List<Friend> onlineFriendList = new List<Friend>();
+                Console.WriteLine(msgsNodes.Count);
+
+                foreach (XmlNode n in msgsNodes)
+                {
+                    Friend friend = new Friend();
+                    XmlUtils.UseNode(n);
+                    friend.Id = XmlUtils.IntVal();
+                    onlineFriendList.Add(friend);
+                }
+                return onlineFriendList;
+            }
+            return null;
+        }
+
         /// <summary>
         /// Gets the friend list
         /// </summary>
@@ -92,6 +112,23 @@ namespace ApiCore.Friends
             }
             return this.buildFriendsEntryList(x);
 
+        }
+
+        public List<Friend> GetOnline()
+        {
+            this.Manager.Method("friends.getOnline");
+
+            string resp = this.Manager.Execute().GetResponseString();
+            if (this.Manager.MethodSuccessed)
+            {
+                XmlDocument x = this.Manager.GetXmlDocument(resp);
+                if (x.SelectSingleNode("/response").InnerText.Equals("0"))
+                {
+                    return null;
+                }
+                return this.buildOnlineFriendsEntryList(x);
+            }
+            return null;
         }
 
     }
