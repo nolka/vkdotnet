@@ -6,6 +6,7 @@ using System.Xml;
 using System.Web;
 
 using ApiCore;
+using ApiCore.Utils;
 
 namespace ApiCore.Messages
 {
@@ -32,9 +33,19 @@ namespace ApiCore.Messages
         private List<Message> buildMessagesList(XmlDocument x, MessageType type)
         {
             XmlUtils.UseNode(x);
+            
             int msgCount = XmlUtils.Int("/response/count");
             //int msgCount = Convert.ToInt32(x.SelectNodes("/response/count"));
             XmlNodeList msgsNodes = x.SelectNodes("/response/message");
+
+            EntityBuilder builder = new EntityBuilder();
+            List<Message> mappedMessages = new List<Message>();
+            foreach (XmlNode node in msgsNodes)
+            {
+                mappedMessages.Add((Message)builder.MapTo(typeof(ApiCore.Messages.Message), node));
+            }
+
+
             // если количество сообщений больше 0, работаем
             if (msgsNodes.Count > 0)
             {
@@ -81,7 +92,7 @@ namespace ApiCore.Messages
                     }
                     // делаем рутиную работу про преобразованию xml в объекты
                     message.Date = CommonUtils.FromUnixTime(XmlUtils.Int("date")); // CommonUtils.FromUnixTime(msgNode.SelectSingleNode("date").InnerText);
-                    message.State = (MessageState)XmlUtils.Int("read_state"); //(MessageState)Convert.ToInt32(msgNode.SelectSingleNode("read_state").InnerText);
+                    message.ReadState = (MessageState)XmlUtils.Int("read_state"); //(MessageState)Convert.ToInt32(msgNode.SelectSingleNode("read_state").InnerText);
                     msgList.Add(message);
                 }
                 return msgList;

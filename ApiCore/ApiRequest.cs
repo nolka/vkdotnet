@@ -45,7 +45,6 @@ namespace ApiCore
             //}
             //catch (WebException e)
             //{
-            //    Console.WriteLine("ololo: "+e.Message);
             //    return null;
             //}
             //catch (Exception e)

@@ -39,7 +39,7 @@ namespace ApiCore.Photos
 
         private List<AlbumEntry> buildAlbumsList(XmlNode data)
         {
-            XmlNodeList nodes = data.SelectNodes("album");
+            XmlNodeList nodes = data.SelectNodes("response/album");
             if (nodes.Count > 0)
             {
                 List<AlbumEntry> albums = new List<AlbumEntry>();
@@ -93,7 +93,7 @@ namespace ApiCore.Photos
 
         private List<PhotoEntryFull> buildPhotosListFull(XmlNode data)
         {
-            XmlNodeList nodes = data.SelectNodes("photo");
+            XmlNodeList nodes = data.SelectNodes("response/photo");
             if (nodes.Count > 0)
             {
                 List<PhotoEntryFull> photos = new List<PhotoEntryFull>();
@@ -108,7 +108,7 @@ namespace ApiCore.Photos
 
         private List<PhotoEntryShort> buildPhotosListShort(XmlNode data)
         {
-            XmlNodeList nodes = data.SelectNodes("photo");
+            XmlNodeList nodes = data.SelectNodes("response/photo");
             if (nodes.Count > 0)
             {
                 List<PhotoEntryShort> photos = new List<PhotoEntryShort>();

@@ -38,14 +38,20 @@ namespace ApiCore
         public string FileName = "";
     }
 
+    public delegate void HttpUploaderLogHandler(object sender, string message);
 
     public class HttpUploaderFactory
     {
         UploadFormProgressEventArgs formEventArgs;
         UploadFileProgressEventArgs filesEventArgs;
 
-        public int Timeout = 15000;
+        private CookieCollection responseCookies = null;
+        private CookieCollection requestCookies = null;
+        
+        public int Timeout = 150000;
         public int BufferSize = 4096;
+
+        public bool UseCookies = false;
 
         public HttpUploaderFactory()
         {
@@ -91,6 +97,8 @@ namespace ApiCore
             }
         }
 
+        #region Events
+
         public event HttpUploaderFormProgressHandler UploadFormProgress;
         protected virtual void OnFormFieldUploadProgress(UploadFormProgressEventArgs e)
         {
@@ -98,17 +106,6 @@ namespace ApiCore
             {
                 UploadFormProgress(this, e);
             }
-        }
-
-        private long getFilesLength(NameValueCollection files)
-        {
-            long size = 0;
-            foreach (string filename in files.Keys)
-            {
-                //System.Windows.Forms.MessageBox.Show(files[filename] + " => " +new FileInfo(files[filename]).Length.ToString());
-                size += new FileInfo(files[filename]).Length;
-            }
-            return size;
         }
 
         public event HttpUploaderFileProgressHandler UploadFileProgress;
@@ -119,6 +116,32 @@ namespace ApiCore
                 UploadFileProgress(this, e);
             }
         }
+
+        public event HttpUploaderLogHandler OnLog;
+        protected virtual void Log(string msg)
+        {
+            if (OnLog != null)
+            {
+                OnLog(this, msg);
+            }
+        }
+
+        #endregion
+
+        private long getFilesLength(NameValueCollection files)
+        {
+            long size = 0;
+            if (files == null)
+                return 0;
+            foreach (string filename in files.Keys)
+            {
+                //System.Windows.Forms.MessageBox.Show(files[filename] + " => " +new FileInfo(files[filename]).Length.ToString());
+                size += new FileInfo(files[filename]).Length;
+            }
+            return size;
+        }
+
+
 
         private void updateFormUploadEvent(int currentBytes, int totalBytes, float percent)
         {
@@ -200,16 +223,22 @@ namespace ApiCore
             int fileFieldsCompleted = 0;
 
             long totalFilesLength = this.getFilesLength(files);
+            this.Log(string.Format("make request to {0}, form values count: {1}, files: {2}", url, ((formItems == null) ? 0 : formItems.Count), ((files == null) ? 0 : files.Count)));
 
             #region init variables
             // разделитель полей данных в POST запросе
             string boundary = "--xtr---" + DateTime.Now.Ticks.ToString("x");
             // создаем запрос к переданному нам URL
             HttpWebRequest httpRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+            if (this.UseCookies)
+            {
+                httpRequest.CookieContainer = new CookieContainer();
+            }
             httpRequest.ProtocolVersion = HttpVersion.Version11;
             httpRequest.Method = "POST"; // метод запроса - POST
+            httpRequest.UserAgent = "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.142 Safari/535.19";
             httpRequest.Timeout = this.Timeout;
-            httpRequest.KeepAlive = true; // постоянное подключение
+            httpRequest.KeepAlive = false; // постоянное подключение
             //httpRequest.SendChunked = false; // Отправка данных кусками
             httpRequest.UserAgent = "xternalx uploader/0.1a"; // копирайт, хуле :)
             // указываем разделитель переданных параметров
@@ -318,10 +347,31 @@ namespace ApiCore
             reqStream.Close();
 
             HttpWebResponse r = (HttpWebResponse)httpRequest.GetResponse();
+            this.responseCookies = r.Cookies;
             StreamReader sr = new StreamReader(r.GetResponseStream());
 
             return sr.ReadToEnd();
 
+        }
+
+        public CookieCollection GetResponseCoockies()
+        {
+            return this.responseCookies;
+        }
+
+        public void SetRequestCookies(CookieCollection cookies)
+        {
+            this.requestCookies = cookies;
+        }
+
+        public void SetRequestCookies(string key, string val)
+        {
+            if (this.requestCookies == null)
+            {
+                this.requestCookies = new CookieCollection();
+            }
+            Cookie newCookie = new Cookie(key, val);
+            this.requestCookies.Add(newCookie);
         }
 
 

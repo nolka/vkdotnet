@@ -106,7 +106,7 @@ namespace ApiCore.Audio
             XmlNode result = this.Manager.Execute().GetResponseXml();
 
                 XmlUtils.UseNode(result);
-                return XmlUtils.String("upload_url");
+                return XmlUtils.String("response/upload_url");
 
         }
 

@@ -14,7 +14,6 @@ using ApiCore.Audio;
 using ApiCore.Friends;
 using ApiCore.Messages;
 using ApiCore.Photos;
-using ApiCore.Questions;
 using ApiCore.Status;
 using ApiCore.Wall;
 using HttpDownloader;

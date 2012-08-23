@@ -16,11 +16,13 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,6 +52,8 @@
       <DependentUpon>CapthaWnd.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils\ApiPermissions.cs" />
+    <Compile Include="Utils\EntityBuilder.cs" />
+    <Compile Include="Utils\Metadata.cs" />
     <Compile Include="Utils\QueryBuilders\ApiQueryBuilder.cs" />
     <Compile Include="Utils\SessionManager\Authorizarion\AuthType.cs" />
     <Compile Include="Utils\SessionManager\Authorizarion\VKAuth\VKAuth.cs">
@@ -71,8 +75,6 @@
     <Compile Include="Utils\SessionManager\SessionManager.cs" />
     <Compile Include="Utils\SessionManager\Sessions\VKSessionInfo.cs" />
     <Compile Include="Utils\XmlUtils.cs" />
-    <Compile Include="Wrappers\Activity\ActivityEntry.cs" />
-    <Compile Include="Wrappers\Activity\ActivityFactory.cs" />
     <Compile Include="ApiManager.cs" />
     <Compile Include="ApiRequest.cs" />
     <Compile Include="Exceptions\ApiRequestEmptyAnswerException.cs" />
@@ -115,10 +117,6 @@
     <Compile Include="Wrappers\Messages\MessagesFactory.cs" />
     <Compile Include="Utils\CommonUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Wrappers\Offers\OfferEntry.cs" />
-    <Compile Include="Wrappers\Offers\OfferInboundEntry.cs" />
-    <Compile Include="Wrappers\Offers\OfferOutboundEntry.cs" />
-    <Compile Include="Wrappers\Offers\OffersFactory.cs" />
     <Compile Include="Wrappers\Photos\AlbumAccessPrivacy.cs" />
     <Compile Include="Wrappers\Photos\AlbumCommentPrivacy.cs" />
     <Compile Include="Wrappers\Photos\AlbumEntry.cs" />
@@ -132,12 +130,6 @@
     <Compile Include="Wrappers\Polls\PollAnswer.cs" />
     <Compile Include="Wrappers\Polls\PollEntry.cs" />
     <Compile Include="Wrappers\Polls\PollsFactory.cs" />
-    <Compile Include="Wrappers\Questions\QuestionAnswer.cs" />
-    <Compile Include="Wrappers\Questions\QuestionAnswerVoter.cs" />
-    <Compile Include="Wrappers\Questions\QuestionEntry.cs" />
-    <Compile Include="Wrappers\Questions\QuestionsFactory.cs" />
-    <Compile Include="Wrappers\Questions\QuestionSortMode.cs" />
-    <Compile Include="Wrappers\Questions\QuestionType.cs" />
     <Compile Include="Wrappers\Common\GeoCoords.cs" />
     <Compile Include="Wrappers\Common\GeoTypePlace.cs" />
     <Compile Include="Wrappers\Common\Attachment.cs" />

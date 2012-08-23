@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using ApiCore.AttachmentTypes;
+using System.Text.RegularExpressions;
 
 namespace ApiCore
 {
@@ -16,6 +17,14 @@ namespace ApiCore
             this.Type = type;
             this.UserId = userId;
             this.MediaId = mediaId;
+        }
+
+        public MessageAttachment(string attachmentString)
+        {
+            Match matches = Regex.Match(attachmentString, @"^(?<type>[a-z])(?<userid>[\d]+)\_(?<mediaid>[\d]+)");
+            this.Type = (AttachmentType)Convert.ToInt32(matches.Groups["type"].Value);
+            this.UserId = Convert.ToInt32(matches.Groups["userid"].Value);
+            this.MediaId = Convert.ToInt32( matches.Groups["mediaid"].Value);
         }
 
         public string AttachmentTypeToString()

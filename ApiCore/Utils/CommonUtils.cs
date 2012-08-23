@@ -36,13 +36,17 @@ namespace ApiCore
 
         public static string[] IntArrayToString(int[] integers)
         {
-            string[] arr = new string[integers.Length];
-            int i=0;
-            foreach(int item in integers)
+            try
             {
-                arr[i++] = item.ToString();
+                string[] arr = new string[integers.Length];
+                int i = 0;
+                foreach (int item in integers)
+                {
+                    arr[i++] = item.ToString();
+                }
+                return arr;
             }
-            return arr;
+            catch { return new string[]{}; }
         }
 
         public static string IntArrayToCommaSeparatedString(int[] integers)
