@@ -50,6 +50,7 @@ namespace ApiCore
                 this.si.Scope = this.Scope;
                 this.si.Token = (string)h["access_token"];
                 this.si.Expire = Convert.ToInt32(h["expires_in"]);
+				this.si.UserId = Convert.ToInt32(h["user_id"]);
 
                 this.LoginInfoReceived = true;
                 this.Close();
