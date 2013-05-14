@@ -72,17 +72,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\HttpDownloader\HttpDownloader\HttpDownloader.csproj">
-      <Project>{DB451818-C2DC-4408-B1B9-D1AC0C939E51}</Project>
-      <Name>HttpDownloader</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ApiCore\ApiCore.csproj">
       <Project>{6885B1CF-B02D-4AB0-9F5C-A3EE4974655C}</Project>
       <Name>ApiCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\VkMan\VkMan.csproj">
-      <Project>{DCCDEC6D-B280-49AE-BD67-20E31274A7FF}</Project>
-      <Name>VkMan</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

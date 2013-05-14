@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ApiCore.Utils.Authorization;
 
 namespace ApiCore
 {

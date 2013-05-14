@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.IO;
+using ApiCore.Utils.Authorization;
+using ApiCore.Utils.Authorization.Exceptions;
 
 namespace ApiCore
 {
@@ -47,54 +49,29 @@ namespace ApiCore
             }
         }
 
-        /// <summary>
-        /// Gets the session with browser
-        /// </summary>
-        /// <returns>SessionInfo with info about user session. Null - if login failed</returns>
-        public SessionInfo GetSession()
-        {
-            this.OnLog("Creating login wnd...");
-            VKAuth wnd = new VKAuth();
-            wnd.Permissions = this.Permissions;
-            wnd.AppId = this.AppId;
-            wnd.ShowDialog();
-            if (wnd.LoginInfoReceived)
-            {
-                this.OnLog("Authorization successed!");
-                return wnd.si;
-            }
-            else
-            {
-                this.OnLog("Authorization failed!");
-                return null;
-            }
-        }
-
         public SessionInfo GetOAuthSession()
         {
             this.OnLog("Creating OAuth login wnd...");
-            OAuth wnd = new OAuth(this.AppId, this.Scope, AuthDisplay.Popup);
-            wnd.ShowDialog();
-            if (wnd.LoginInfoReceived)
+            OAuth auth = new OAuth();
+            
+            try 
             {
                 this.OnLog("Authorization successed!");
-                return wnd.si;
+                return auth.Authorize(this.AppId, this.Scope, AuthDisplay.Popup.ToString());
             }
-            else
+            catch(AuthorizationFailedException e)
             {
-                this.OnLog("Authorization failed!");
+                this.OnLog("Authorization failed: "+e.Message);
                 return null;
             }
-        }
-
-        public SessionInfo GetSession(string login, string pwd)
-        {
-            this.OnLog("Trying to get session with login "+login);
-            NoBrowser no = new NoBrowser(login, pwd);
+            catch(Exception e)
+            {
+                this.OnLog("Authorization failed by unknown reason!");
+                return null;
+            }
             return null;
         }
-
-
+        
         public void CloseSession()
         {
         }

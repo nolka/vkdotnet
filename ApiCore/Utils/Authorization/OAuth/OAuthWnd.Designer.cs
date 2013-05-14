@@ -1,6 +1,6 @@
-﻿namespace ApiCore
+﻿namespace ApiCore.Utils.Authorization
 {
-    partial class OAuth
+    partial class OAuthWnd
     {
         /// <summary>
         /// Required designer variable.

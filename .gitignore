@@ -5,3 +5,6 @@
 *.pdb
 [Oo]bj/
 *.dll
+/*.sln
+*.suo
+*.pidb

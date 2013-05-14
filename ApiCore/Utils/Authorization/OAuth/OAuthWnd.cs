@@ -7,25 +7,25 @@ using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
-namespace ApiCore
+namespace ApiCore.Utils.Authorization
 {
-    public partial class OAuth : Form
+    public partial class OAuthWnd : Form
     {
-        public string Scope;
         public int AppId;
+        public string Scope;
         public string Display;
 
-        public OAuthSessionInfo si;
-        public bool LoginInfoReceived = false;
+        public OAuthSessionInfo SessionData;
+        public bool Authenticated = false;
 
-        public OAuth(int appId, string scope, string display)
+        public OAuthWnd(int appId, string scope, string display)
         {
             this.AppId = appId;
             this.Scope = scope;
             this.Display = display;
             InitializeComponent();
         }
-
+        
         private void LoginWnd_Shown(object sender, EventArgs e)
         {
             string urlTemplate = "http://api.vkontakte.ru/oauth/authorize?client_id={0}&scope={1}&redirect_uri={2}&display={3}&response_type=token";
@@ -45,14 +45,14 @@ namespace ApiCore
                     h[kv[0]] = kv[1];
                 }
 
-                this.si = new OAuthSessionInfo();
-                this.si.AppId = this.AppId;
-                this.si.Scope = this.Scope;
-                this.si.Token = (string)h["access_token"];
-                this.si.Expire = Convert.ToInt32(h["expires_in"]);
-				this.si.UserId = Convert.ToInt32(h["user_id"]);
+                this.SessionData = new OAuthSessionInfo();
+                this.SessionData.AppId = this.AppId;
+                this.SessionData.Scope = this.Scope;
+                this.SessionData.Token = (string)h["access_token"];
+                this.SessionData.Expire = Convert.ToInt32(h["expires_in"]);
+				this.SessionData.UserId = Convert.ToInt32(h["user_id"]);
 
-                this.LoginInfoReceived = true;
+                this.Authenticated = true;
                 this.Close();
             }
             
@@ -63,7 +63,6 @@ namespace ApiCore
             //this.wnd.LogIt("loading: "+ e.Url );
             
         }
-
-
+        
     }
 }

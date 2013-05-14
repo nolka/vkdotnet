@@ -52,23 +52,20 @@
       <DependentUpon>CapthaWnd.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils\ApiPermissions.cs" />
+    <Compile Include="Utils\Authorization\Exceptions\AuthorizationFailedException.cs" />
     <Compile Include="Utils\EntityBuilder.cs" />
     <Compile Include="Utils\Metadata.cs" />
     <Compile Include="Utils\QueryBuilders\ApiQueryBuilder.cs" />
-    <Compile Include="Utils\SessionManager\Authorizarion\AuthType.cs" />
-    <Compile Include="Utils\SessionManager\Authorizarion\VKAuth\VKAuth.cs">
+    <Compile Include="Utils\Authorization\AuthType.cs" />
+    <Compile Include="Utils\Authorization\IOAuthProvider.cs" />
+    <Compile Include="Utils\Authorization\IVKAuthProvider.cs" />
+    <Compile Include="Utils\Authorization\OAuth\OAuth.cs" />
+    <Compile Include="Utils\Authorization\AuthDisplay.cs" />
+    <Compile Include="Utils\Authorization\OAuth\OAuthWnd.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Utils\SessionManager\Authorizarion\VKAuth\VKAuth.Designer.cs">
-      <DependentUpon>VKAuth.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Utils\SessionManager\Authorizarion\NoBrowser\NoBrowser.cs" />
-    <Compile Include="Utils\SessionManager\Authorizarion\AuthDisplay.cs" />
-    <Compile Include="Utils\SessionManager\Authorizarion\OAuth\OAuth.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Utils\SessionManager\Authorizarion\OAuth\OAuth.Designer.cs">
-      <DependentUpon>OAuth.cs</DependentUpon>
+    <Compile Include="Utils\Authorization\OAuth\OAuthWnd.Designer.cs">
+      <DependentUpon>OAuthWnd.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils\SessionManager\Sessions\OAuthSessionInfo.cs" />
     <Compile Include="Utils\SessionManager\Sessions\SessionInfo.cs" />
@@ -152,12 +149,8 @@
     <EmbeddedResource Include="Handlers\CapthaWnd.resx">
       <DependentUpon>CapthaWnd.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Utils\SessionManager\Authorizarion\VKAuth\VKAuth.resx">
-      <DependentUpon>VKAuth.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Utils\SessionManager\Authorizarion\OAuth\OAuth.resx">
-      <DependentUpon>OAuth.cs</DependentUpon>
+    <EmbeddedResource Include="Utils\Authorization\OAuth\OAuthWnd.resx">
+      <DependentUpon>OAuthWnd.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
