@@ -9,7 +9,6 @@ namespace ApiCore.Handlers
     public class BaseHandlers
     {
         
-
     }
     
 }

@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
 using ApiCore.AttachmentTypes;
+using ApiCore.Utils.Mapper;
 
 namespace ApiCore.Wall
 {
@@ -133,24 +134,7 @@ namespace ApiCore.Wall
                 List<WallEntry> msgList = new List<WallEntry>();
                 foreach (XmlNode msgNode in msgsNodes)
                 {
-                    XmlUtils.UseNode(msgNode);
-                    WallEntry wall = new WallEntry();
-                    wall.Id = XmlUtils.Int("id");
-                    wall.Body = XmlUtils.String("text");
-                    wall.FromUser = XmlUtils.Int("from_id");
-                    wall.ToUser = XmlUtils.Int("to_id");
-                    wall.Date = CommonUtils.FromUnixTime(XmlUtils.String("date"));
-                    wall.Online = ((XmlUtils.String("online")) == "1" ? true : false);
-                    wall.Attachment = this.getAttachment(msgNode.SelectSingleNode("attachment"));
-                    wall.CopyOwnerId = XmlUtils.Int("copy_owner_id");
-                    wall.CopyPostId = XmlUtils.Int("copy_post_id");
-                    wall.LikesInfo = LikesFactory.GetLikesInfo(msgNode.SelectSingleNode("likes"));
-                    wall.CommentsInfo = CommentsFactory.GetCommentsInfo(msgNode.SelectSingleNode("comments"));
-                    if (XmlUtils.Int("reply_count") != -1)
-                    {
-                        wall.RepliesCount = XmlUtils.Int("reply_count");
-                    }
-                    msgList.Add(wall);
+                    msgList.Add((WallEntry)new XmlResponseMapper().Map(msgNode, typeof(WallEntry)));
                 }
                 return msgList;
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using ApiCore.Utils.Mapper;
 
 namespace ApiCore.Utils
 {
@@ -88,7 +89,7 @@ namespace ApiCore.Utils
                 foreach (FieldInfo ff in fields)             
                 {
                     // получаем метаданные конкретного поля
-                    Metadata meta = (Metadata)System.Attribute.GetCustomAttribute(ff, typeof(Metadata));
+                    MapperInfo meta = (MapperInfo)System.Attribute.GetCustomAttribute(ff, typeof(MapperInfo));
                     if (meta != null)
                     {
                         // Если Принудительно не указано, к какому типу нужно приводить значение свойства,

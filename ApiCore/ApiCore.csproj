@@ -54,7 +54,9 @@
     <Compile Include="Utils\ApiPermissions.cs" />
     <Compile Include="Utils\Authorization\Exceptions\AuthorizationFailedException.cs" />
     <Compile Include="Utils\EntityBuilder.cs" />
-    <Compile Include="Utils\Metadata.cs" />
+    <Compile Include="Utils\Mapper\IResponseMapper.cs" />
+    <Compile Include="Utils\Mapper\MapperInfo.cs" />
+    <Compile Include="Utils\Mapper\XmlResponseMapper.cs" />
     <Compile Include="Utils\QueryBuilders\ApiQueryBuilder.cs" />
     <Compile Include="Utils\Authorization\AuthType.cs" />
     <Compile Include="Utils\Authorization\IOAuthProvider.cs" />

@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApiCore
+namespace ApiCore.Utils.Mapper
 {
     /// <summary>
     /// Помогает мапить ответы от api на классы библиотеки.
     /// </summary>
-    public class Metadata: System.Attribute
+    public class MapperInfo: System.Attribute
     {
         private string node;
 
-        public Type CastTo = null;
+        public Type CastTo = typeof(string);
         public bool IsCollection = false;
 
-        public Metadata(string node)
+        public MapperInfo(string node)
         {
             this.node = node;
         }
@@ -25,7 +25,7 @@ namespace ApiCore
         }
     }
 
-    public class ClassMetadata : Metadata
+    public class ClassMetadata : MapperInfo
     {
         public ClassMetadata(string node) : base(node) { }
     }
