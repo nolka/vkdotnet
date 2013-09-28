@@ -49,6 +49,20 @@ namespace ApiCore
             }
         }
 
+        public SessionInfo ReLogin()
+        {
+            this.OnLog("Creating OAuth relogin wnd...");
+            Relogin relogin = new Relogin(this.AppId, this.Scope, AuthDisplay.Popup);
+            relogin.ShowDialog();
+            if (!relogin.LoginInfoReceived)
+            {
+                this.OnLog("Authorization failed!");
+                return null;
+            }
+            this.OnLog("Authorization successed!");
+            return relogin.SessionData;
+        }
+
         public SessionInfo GetOAuthSession()
         {
             this.OnLog("Creating OAuth login wnd...");
