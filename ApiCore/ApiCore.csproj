@@ -53,6 +53,12 @@
     </Compile>
     <Compile Include="Utils\ApiPermissions.cs" />
     <Compile Include="Utils\Authorization\Exceptions\AuthorizationFailedException.cs" />
+    <Compile Include="Utils\Authorization\OAuth\Relogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utils\Authorization\OAuth\Relogin.Designer.cs">
+      <DependentUpon>Relogin.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils\EntityBuilder.cs" />
     <Compile Include="Utils\Metadata.cs" />
     <Compile Include="Utils\QueryBuilders\ApiQueryBuilder.cs" />
@@ -76,6 +82,7 @@
     <Compile Include="ApiRequest.cs" />
     <Compile Include="Exceptions\ApiRequestEmptyAnswerException.cs" />
     <Compile Include="Exceptions\ApiRequestErrorException.cs" />
+    <Compile Include="Wrappers\Audio\AudioGenre.cs" />
     <Compile Include="Wrappers\Audio\AudioUploadedInfo.cs" />
     <Compile Include="Wrappers\Common\ExportServices.cs" />
     <Compile Include="Wrappers\Common\Factories\BaseFactory.cs" />
@@ -152,6 +159,9 @@
     <EmbeddedResource Include="Utils\Authorization\OAuth\OAuthWnd.resx">
       <DependentUpon>OAuthWnd.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utils\Authorization\OAuth\Relogin.resx">
+      <DependentUpon>Relogin.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

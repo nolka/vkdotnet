@@ -8,9 +8,11 @@ namespace ApiCore.Audio
     {
         public int OwnerId;
         public int Duration;
+        public int Genre;
         public string Artist;
         public string Title;
         public string Url;
+        
 
         public override string ToString()
         {
