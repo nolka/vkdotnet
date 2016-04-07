@@ -19,7 +19,7 @@ namespace ApiCore
         Wiki = 128,
         SidebarLink = 256,
         WallPublisher = 512,
-        UserStatus = 1204,
+        UserStatus = 1024,
         UserNotes = 2048,
         ExtendedMessages = 4096,
         ExtendedWall = 8192
